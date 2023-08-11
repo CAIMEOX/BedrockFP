@@ -1,4 +1,4 @@
-import Minecraft
+import MC.Server
 
 on_chat_event : ChatSendAfterEvent -> IO ()
 on_chat_event e = if message e == "Hello"

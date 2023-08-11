@@ -1,0 +1,11 @@
+package ideal-test
+version = 0.1.0
+authors = "CAIMEOX"
+license = "MIT"
+depends = js
+main = Main
+
+-- name of executable
+executable = "ideal-test"
+
+sourcedir = "src"

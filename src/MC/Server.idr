@@ -1,3 +1,5 @@
+module MC.Server
+
 export data UniverseUnion : Type where [external]
 export data Record : Type where [external]
 export data Block : Type where [external]

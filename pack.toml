@@ -1,0 +1,10 @@
+[custom.all.ideal]
+type = "local"
+path = "."
+ipkg = "ideal.ipkg"
+test = "test/test.ipkg"
+
+[custom.all.ideal-test]
+type = "local"
+path = "test"
+ipkg = "test.ipkg"

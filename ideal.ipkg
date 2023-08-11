@@ -1,0 +1,9 @@
+package ideal
+version = 0.1.0
+authors = "CAIMEOX"
+
+depends = js
+
+modules = MC,
+          MC.Server
+sourcedir = "src"
