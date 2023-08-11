@@ -1,5 +1,19 @@
 import { Project, SourceFile } from "ts-morph";
 import { ClassType } from "./handler.ts";
+
+export const BlackList = {
+  classes: [
+    "PlayerIterator",
+    "BlockLocationIterator",
+    "EntityIterator",
+    "EntityTypeIterator",
+    "ItemTypeIterator",
+  ],
+  methods: [
+    'next', '[Symbol.iterator]'
+  ]
+};
+
 class CodeGen {
   code_raw: string;
   type_pool: Set<string> = new Set();
@@ -16,6 +30,7 @@ class CodeGen {
   handleClass() {
     this.source_file.getClasses().forEach((node) => {
       const name = node.getSymbol()!.getName();
+      if (BlackList.classes.includes(name)) return;
       this.classes.set(name, new ClassType(name, node));
     });
   }

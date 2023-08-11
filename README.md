@@ -9,7 +9,8 @@ This project is still working in progress.
 - [ ] Implement **@minecraft/server**
     - [x] Basic Data Types support
     - [x] Event system
-    - [ ] Promise and more complex data types
+    - [x] Promise and more complex data types
+    - [ ] Interfaces and Enum
 - [ ] Implement **@minecraft/server-ui** and more
 - [x] Auto code generation
 - [ ] A code Starter
