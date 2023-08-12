@@ -11,10 +11,12 @@ import {
 import {
   check_type,
   fix_method_name,
+  idris2type,
   is_not_private,
   makeSign,
   process_type,
   Sign,
+  type2string,
 } from "./types.ts";
 import { BlackList } from "./gen.ts";
 
@@ -23,6 +25,7 @@ class ClassType {
   con: ConstructorType[];
   methods: MethodType[];
   property: PropertyType[];
+  transTo: string[] = [];
   constructor(name: string, dec: ClassDeclaration) {
     this.name = name;
     this.con = dec
@@ -31,22 +34,50 @@ class ClassType {
       .map((cd) => {
         return new ConstructorType(name, cd);
       });
-    this.methods = dec.getMethods().filter(x => !BlackList.methods.includes(x.getName())).map((md) => {
-      return new MethodType(name, md);
-    });
+    this.methods = dec
+      .getMethods()
+      .filter((x) => !BlackList.methods.includes(x.getName()))
+      .map((md) => {
+        return new MethodType(name, md);
+      });
     this.property = dec.getProperties().map((pd) => {
       return new PropertyType(name, pd);
     });
-    console.log(this.gen());
+    if (dec.getExtends()) {
+      this.transTo.push(process_type(dec.getExtends()!.getType()));
+    }
   }
 
-  gen() {
+  find_property(interfaces: InterfaceType[]): string {
+    let id = "";
+    interfaces.forEach((x) => {
+      let v = false;
+      for (let j of x.fields.keys()) {
+        this.property.map((y) => (v = v || y.is_type(j, x.fields.get(j)!)));
+      }
+      if (v) id = x.name;
+    });
+    return id;
+  }
+
+  gen(interfaces: InterfaceType[]) {
     let code = [this.type_def()];
     code.push(this.namespace_gen());
     this.con.map((x) => code.push(`\texport\n\t${makeSign(x.get_sign())}`));
     this.methods.map((x) => code.push(`\texport\n\t${makeSign(x.get_sign())}`));
+    if (this.find_property(interfaces) !== "") {
+      this.transTo.push(this.find_property(interfaces));
+    }
     this.property.map((x) =>
       x.get_sign().map((y) => code.push(`\texport\n\t${makeSign(y)}`))
+    );
+    this.transTo.map((x) =>
+      code.push(
+        `\texport\n\t${makeSign({
+          name: "as" + x,
+          types: [this.name, x],
+        })}`
+      )
     );
     return code.length > 2 ? code.join("\n") : code[0];
   }
@@ -144,14 +175,14 @@ class PropertyType {
     if (!this.read) {
       signs.push({
         name: "set_" + this.name,
-        types: [
-          this.class_name,
-          process_type(this.return_value),
-          "IO ()",
-        ],
+        types: [this.class_name, process_type(this.return_value), "IO ()"],
       });
     }
     return signs;
+  }
+
+  is_type(name: string, t: string): boolean {
+    return name === this.name && t === process_type(this.return_value);
   }
 
   verify(): boolean {
@@ -161,13 +192,63 @@ class PropertyType {
 
 class InterfaceType {
   name: string;
-  constructor(name: string, dec: InterfaceDeclaration) {}
+  fields: Map<string, string> = new Map();
+  constructor(name: string, dec: InterfaceDeclaration) {
+    this.name = name;
+    dec
+      .getMembers()
+      .filter((x) => !x.getSymbol()!.isOptional())
+      .map((x) =>
+        this.fields.set(x.getSymbol()!.getName(), type2string(x.getType()))
+      );
+  }
+
+  is_empty() {
+    return this.fields.size === 0;
+  }
 }
 
 class EnumType {
   name: string;
+  keys: string[];
+  enum_type: string;
+  values: unknown[];
+  constructor(name: string, dec: EnumDeclaration) {
+    this.name = name;
+    this.keys = dec.getMembers().map((e) => e.getName());
+    this.values = dec.getMembers().map((e) => e.getValue());
+    this.enum_type = idris2type(typeof this.values[0]);
+  }
 
-  constructor(name: string, dec: EnumDeclaration) {}
+  get_toFFI(): string[] {
+    let code = [`ToFFI ${this.name} ${this.enum_type} where`];
+    this.keys.forEach((k, i) => {
+      code.push(`\ttoFFI ${k} = ${this.make_string(this.values[i])}`);
+    });
+    return code;
+  }
+
+  make_string(s: unknown) {
+    return this.enum_type === "String" ? `"${s}"` : s;
+  }
+
+  get_fromFFI(): string[] {
+    let code = [`FromFFI ${this.name} ${this.enum_type} where`];
+    this.values.forEach((v, i) => {
+      code.push(`\tfromFFI ${this.make_string(v)} = ${this.keys[i]}`);
+    });
+    return code;
+  }
+
+  get_data() {
+    return `data ${this.name} = ${this.keys.join(" | ")}`;
+  }
+
+  gen(): string {
+    return [this.get_data(), ...this.get_fromFFI(), ...this.get_toFFI()].join(
+      "\n"
+    );
+  }
 }
 
 class ConstantType {
@@ -176,4 +257,4 @@ class ConstantType {
   constructor(name: string, dec: VariableDeclaration) {}
 }
 
-export { ClassType, MethodType, InterfaceType, ConstructorType };
+export { ClassType, MethodType, EnumType, InterfaceType, ConstructorType };
