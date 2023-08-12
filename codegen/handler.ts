@@ -61,24 +61,43 @@ class ClassType {
   }
 
   gen(interfaces: InterfaceType[]) {
-    let code = [this.type_def()];
+    let code: string[] = [];
     code.push(this.namespace_gen());
-    this.con.map((x) => code.push(`\texport\n\t${makeSign(x.get_sign())}`));
-    this.methods.map((x) => code.push(`\texport\n\t${makeSign(x.get_sign())}`));
+    this.con.map((x) => {
+      code.push(`\texport`);
+      code.push(`\t%foreign (cons_new "${this.name}")`);
+      code.push(`\t${makeSign(x.get_sign())}`);
+    });
+    this.methods.map((x) => {
+      code.push(`\texport`);
+      const sign = x.get_sign();
+      code.push(`\t%foreign (fn_call ${sign.types.length - 1} "${sign.name}")`);
+      code.push(`\t${makeSign(sign)}`);
+    });
     if (this.find_property(interfaces) !== "") {
       this.transTo.push(this.find_property(interfaces));
     }
     this.property.map((x) =>
-      x.get_sign().map((y) => code.push(`\texport\n\t${makeSign(y)}`))
+      x.get_sign().map((y, i) => {
+        code.push(`\texport`);
+        if (i === 0) {
+          code.push(`\t%foreign (get_var "${y.name}")`);
+        } else {
+          code.push(`\t%foreign (update_var "${y.name}")`);
+        }
+        code.push(`\t${makeSign(y)}`);
+      })
     );
-    this.transTo.map((x) =>
+    this.transTo.map((x) => {
+      code.push("\texport");
+      code.push("\t%foreign id_as");
       code.push(
-        `\texport\n\t${makeSign({
+        `\t${makeSign({
           name: "as" + x,
           types: [this.name, x],
         })}`
-      )
-    );
+      );
+    });
     return code.length > 2 ? code.join("\n") : code[0];
   }
 
@@ -206,6 +225,10 @@ class InterfaceType {
   is_empty() {
     return this.fields.size === 0;
   }
+
+  type_def(){
+    return `export data ${this.name} : Type where [external]`
+  }
 }
 
 class EnumType {
@@ -215,14 +238,14 @@ class EnumType {
   values: unknown[];
   constructor(name: string, dec: EnumDeclaration) {
     this.name = name;
-    this.keys = dec.getMembers().map((e) => e.getName());
+    this.keys = dec.getMembers().map((e) => fix_method_name(e.getName()));
     this.values = dec.getMembers().map((e) => e.getValue());
     this.enum_type = idris2type(typeof this.values[0]);
   }
 
   get_toFFI(): string[] {
     let code = [`ToFFI ${this.name} ${this.enum_type} where`];
-    this.keys.forEach((k, i) => {
+    this.keys.map(capitalize).forEach((k, i) => {
       code.push(`\ttoFFI ${k} = ${this.make_string(this.values[i])}`);
     });
     return code;
@@ -234,14 +257,15 @@ class EnumType {
 
   get_fromFFI(): string[] {
     let code = [`FromFFI ${this.name} ${this.enum_type} where`];
+    const keys = this.keys.map(capitalize)
     this.values.forEach((v, i) => {
-      code.push(`\tfromFFI ${this.make_string(v)} = ${this.keys[i]}`);
+      code.push(`\tfromFFI ${this.make_string(v)} = ${keys[i]}`);
     });
     return code;
   }
 
   get_data() {
-    return `data ${this.name} = ${this.keys.join(" | ")}`;
+    return `data ${this.name} = ${this.keys.map(capitalize).join(" | ")}`;
   }
 
   gen(): string {
@@ -255,6 +279,10 @@ class ConstantType {
   name: string;
 
   constructor(name: string, dec: VariableDeclaration) {}
+}
+
+function capitalize(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 export { ClassType, MethodType, EnumType, InterfaceType, ConstructorType };

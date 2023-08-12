@@ -16,6 +16,8 @@ const symFixTable = [
 const nameFixTable = [
   ["'type'", "type"],
   ["'private'", "private_"],
+  ["'string'", "string"],
+  ["'void'", "void"],
 ];
 
 function makeSign(s: Sign): string {
@@ -36,12 +38,12 @@ function fix_method_name(t: string) {
 function mergeUnion(types: string[]): string[] {
   const res: Set<string> = new Set();
   types.map((v) => {
-    if (v === "false" || v==="true") {
+    if (v === "false" || v === "true") {
       res.add("Boolean");
     } else if (v.indexOf(".") !== -1) {
-      res.add(v.split('.')[0])
+      res.add(v.split(".")[0]);
     } else {
-      res.add(v)
+      res.add(v);
     }
   });
   return [...res];
@@ -55,7 +57,7 @@ function type2string(t: Type): string {
     const f_type = t.getCallSignatures()[0];
     return getAnonymous(f_type);
   } else if (t.isUnion()) {
-    const x = mergeUnion(t.getUnionTypes().map(x => type2string(x)))
+    const x = mergeUnion(t.getUnionTypes().map((x) => type2string(x)));
     return x.length === 1 ? x[0] : `Union${x.length} ${x.join(" ")}`;
   } else if (t.getText().includes("Record")) {
     return "Record String (Union3 String Number Boolean)";
@@ -105,5 +107,5 @@ export {
   makeSign,
   is_not_private,
   fix_method_name,
-  idris2type
+  idris2type,
 };

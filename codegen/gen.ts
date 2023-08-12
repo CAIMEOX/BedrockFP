@@ -31,10 +31,7 @@ class CodeGen {
     this.source_file.getInterfaces().forEach((node) => {
       const name = node.getSymbol()!.getName();
       this.type_pool.add(name);
-      if (node.getMembers().filter(x => !x.getSymbol()?.isOptional()).length !== 0) {
-        this.interfaces.set(name, new InterfaceType(name, node));
-      }
-      
+      this.interfaces.set(name, new InterfaceType(name, node));
     });
   }
   handleClass() {
@@ -57,7 +54,14 @@ class CodeGen {
     for (let e of this.enums.values()) {
       code.push(e.gen());
     }
-    const i = [...this.interfaces.values()]
+    const _i = [...this.interfaces.values()];
+    for (let k of this.interfaces.values()) {
+      code.push(k.type_def())
+    }
+    const i = _i.filter(x => !x.is_empty())
+    for (let n of this.classes.values()) {
+      code.push(n.type_def());
+    }
     for (let c of this.classes.values()) {
       code.push(c.gen(i));
     }
