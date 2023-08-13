@@ -73,16 +73,23 @@ class ClassType {
     });
     this.methods.map((x) => {
       const sign = x.get_sign();
-      if (BlackList.classes.filter((x) => sign.types.includes(x)).length > 0){
+      if (BlackList.classes.filter((x) => sign.types.includes(x)).length > 0) {
         return;
       }
       code.push(`\texport`);
       if (sign.name == "subscribe") {
-        sign.types[sign.types.length - 1] = 'IO ' + sign.types[sign.types.length - 1]
+        sign.types[sign.types.length - 1] =
+          "IO " + sign.types[sign.types.length - 1];
+        // Fix Subscribe
+        code.push(
+          `\t%foreign (ffi_tag "${get_fn(sign.types.length - 1, sign.name).replace('$0.subscribe($1)','$0.subscribe(x=>$1(x)()')}")`
+        );
+      } else {
+        code.push(
+          `\t%foreign (ffi_tag "${get_fn(sign.types.length - 1, sign.name)}")`
+        );
       }
-      code.push(
-        `\t%foreign (ffi_tag "${get_fn(sign.types.length - 1, sign.name)}")`
-      );
+
       code.push(`\t${makeSign(sign)}`);
     });
     if (this.find_property(interfaces) !== "") {
@@ -249,7 +256,6 @@ class EnumType {
   values: unknown[];
   constructor(name: string, dec: EnumDeclaration) {
     this.name = name;
-    // this.keys = dec.getMembers().map((e) => fix_method_name(e.getName()));
     this.values = dec.getMembers().map((e) => e.getValue());
     this.enum_type = idris2type(typeof this.values[0]);
   }
@@ -269,8 +275,38 @@ class EnumType {
 
 class ConstantType {
   name: string;
+  const_type: string;
+  value: string;
+  constructor(name: string, dec: VariableDeclaration) {
+    this.name = name;
+    this.const_type = process_type(dec.getType().getApparentType());
+    this.value = dec.getType().getText();
+  }
 
-  constructor(name: string, dec: VariableDeclaration) {}
+  get_sign(): Sign {
+    return {
+      name: this.name,
+      types: [this.const_type],
+    };
+  }
+
+  gen(): string {
+    return this.is_number()
+      ? [
+          `export`,
+          makeSign(this.get_sign()),
+          `${this.name} = ${this.value}`,
+        ].join("\n")
+      : [
+          `export`,
+          `%foreign (const_val "${this.name}")`,
+          makeSign(this.get_sign()),
+        ].join("\n");
+  }
+
+  is_number(): boolean {
+    return this.const_type === "Double";
+  }
 }
 
 function capitalize(s: string) {
@@ -291,4 +327,11 @@ function get_fn(n: number, name: string) {
     .join(",")})`;
 }
 
-export { ClassType, MethodType, EnumType, InterfaceType, ConstructorType };
+export {
+  ClassType,
+  MethodType,
+  EnumType,
+  InterfaceType,
+  ConstantType,
+  ConstructorType,
+};

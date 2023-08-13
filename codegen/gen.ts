@@ -1,5 +1,5 @@
-import { Project, SourceFile } from "ts-morph";
-import { ClassType, EnumType, InterfaceType } from "./handler.ts";
+import { Project, SourceFile, ts } from "ts-morph";
+import { ClassType, ConstantType, EnumType, InterfaceType } from "./handler.ts";
 import * as fs from "node:fs";
 export const BlackList = {
   classes: [
@@ -19,12 +19,31 @@ class CodeGen {
   classes: Map<string, ClassType> = new Map();
   enums: Map<string, EnumType> = new Map();
   interfaces: Map<string, InterfaceType> = new Map();
+  constants: Map<string, ConstantType> = new Map();
   constructor(path: string) {
     const project = new Project({});
     this.source_file = project.addSourceFileAtPath(path);
+    this.source_file.addClass({
+      name: "Error",
+      properties: [
+        {
+          name: "name",
+          type: "string",
+        },
+        {
+          name: "message",
+          type: "string",
+        },
+        {
+          name: "stack",
+          type: "string",
+        },
+      ],
+    });
     this.handleEnum();
     this.handleInterface();
     this.handleClass();
+    this.handleConstant();
   }
 
   handleInterface() {
@@ -49,34 +68,34 @@ class CodeGen {
       this.enums.set(name, new EnumType(name, node));
     });
   }
+  handleConstant(){
+    this.source_file.getVariableDeclarations().forEach((node) => {
+      const name = node.getSymbol()!.getName();
+      this.constants.set(name, new ConstantType(name, node));
+    });
+  }
   writeFile(path: string) {
     const code: string[] = [
-      'module MC.Server',
-      'import JS',
-      'import MC.Provider',
+      "module MC.Server",
+      "import JS",
+      "import MC.Provider",
     ];
     for (let e of this.enums.values()) {
       code.push(e.gen());
     }
     const _i = [...this.interfaces.values()];
     for (let k of this.interfaces.values()) {
-      code.push(k.type_def())
+      code.push(k.type_def());
     }
-    code.push(`export data Error : Type where [external]
-namespace Error
-    export
-    %foreign (get_var "name")
-    name : Error -> String
-    %foreign (get_var "message")
-    message : Error -> String
-    %foreign (get_var "stack")
-    stack : Error -> UndefOr String`)
-    const i = _i.filter(x => !x.is_empty())
+    const i = _i.filter((x) => !x.is_empty());
     for (let n of this.classes.values()) {
       code.push(n.type_def());
     }
     for (let c of this.classes.values()) {
       code.push(c.gen(i));
+    }
+    for (let c of this.constants.values()) {
+      code.push(c.gen())
     }
     fs.writeFileSync(path, code.join("\n"));
   }

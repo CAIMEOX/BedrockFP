@@ -1,6 +1,7 @@
 module Main
 
 import Message
+import Spawn
 
 main : IO ()
-main = Message.test
+main = do Message.test

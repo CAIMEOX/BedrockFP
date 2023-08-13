@@ -2503,7 +2503,7 @@ namespace ItemDurabilityComponent
 	getDamageChance : ItemDurabilityComponent -> Double -> Double
 	export
 	%foreign (ffi_tag "($0) => $0.getDamageRange()")
-	getDamageRange : ItemDurabilityComponent -> NumberRange
+	getDamageRange : ItemDurabilityComponent -> DoubleRange
 	export
 	%foreign (get_var "damage")
 	damage : ItemDurabilityComponent -> Double

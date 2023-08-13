@@ -3,6 +3,7 @@ import { ConstructorDeclaration, Signature, Type } from "ts-morph";
 export interface Sign {
   name: string;
   types: string[];
+  meta?: string;
 }
 
 const symFixTable = [

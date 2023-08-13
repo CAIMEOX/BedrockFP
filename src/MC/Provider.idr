@@ -20,11 +20,11 @@ getArgs a b = map toArg [a..b]
 
 public export 
 update_var : String -> String
-update_var x = ffi_tag $ "(x,y) => x." ++ x ++ " = y"
+update_var x = ffi_tag $ "(x,y) => x && x." ++ x ++ " = y"
 
 public export 
 get_var : String -> String
-get_var x = ffi_tag $ "(x) => x." ++ x
+get_var x = ffi_tag $ "(x) => x && x." ++ x
 
 public export 
 cons_new : Int -> String -> String
