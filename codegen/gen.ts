@@ -102,7 +102,7 @@ class CodeGen {
 }
 
 function main() {
-  const gen = new CodeGen("../../node_modules/@minecraft/server/index.d.ts");
+  const gen = new CodeGen("/home/caimeo/code/pvg/node_modules/@minecraft/server-ui/index.d.ts");
   gen.writeFile("signs.idr");
 }
 

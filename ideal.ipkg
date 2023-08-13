@@ -6,6 +6,9 @@ depends = js
 
 modules = MC,
           MC.Server,
-          MC.Provider
+          MC.Admin,
+          MC.Net,
+          MC.Provider,
+          MC.UI
 
 sourcedir = "src"
