@@ -1,8 +1,5 @@
 module MC
 
-import JS
-
-
-
-main : IO ()
-main = putStrLn "Ideal!"
+import public MC.Server
+import public MC.Provider
+import public MC.Gametest

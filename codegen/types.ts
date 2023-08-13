@@ -10,6 +10,7 @@ const symFixTable = [
   ["string", "String"],
   ["number", "Double"],
   ["boolean", "Boolean"],
+  ["Number", "Double"],
   ["void", "IO ()"],
 ];
 
@@ -52,15 +53,16 @@ function mergeUnion(types: string[]): string[] {
 function type2string(t: Type): string {
   if (t.isArray()) {
     const element_type = t.getArrayElementType()!;
-    return `Array ${bracket(type2string(element_type))}`;
+    return `(Array ${bracket(type2string(element_type))})`;
   } else if (t.isAnonymous()) {
     const f_type = t.getCallSignatures()[0];
     return getAnonymous(f_type);
   } else if (t.isUnion()) {
     const x = mergeUnion(t.getUnionTypes().map((x) => type2string(x)));
+    if (x.includes('String')) return 'String'
     return x.length === 1 ? x[0] : `Union${x.length} ${x.join(" ")}`;
   } else if (t.getText().includes("Record")) {
-    return "Record String (Union3 String Number Boolean)";
+    return "Record String (Union3 String Double Boolean)";
   } else if (t.getText().includes("Promise")) {
     return "Promise CommandResult";
   }

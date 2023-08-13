@@ -1,5 +1,8 @@
-import MC.Server
+module Message
 
+import MC.Server
+import MC.Provider
+import JS
 on_chat_event : ChatSendAfterEvent -> IO ()
 on_chat_event e = if message e == "Hello"
                   then sendMessage p "Hello!"
@@ -7,8 +10,9 @@ on_chat_event e = if message e == "Hello"
       where p : Player 
             p = sender e;
 
-sub : (ChatSendAfterEvent -> IO ()) -> IO ()
-sub = subscribe . chatSend $ afterEvents world
+sub : (ChatSendAfterEvent -> IO ()) -> IO (ChatSendAfterEvent -> IO ())
+sub = ChatSendAfterEventSignal.subscribe $ chatSend $ afterEvents world
 
-main : IO ()
-main = sub on_chat_event
+export
+test : IO ()
+test = (ignore (sub on_chat_event)) >> pure ()

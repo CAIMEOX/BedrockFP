@@ -1,349 +1,26 @@
+module MC.Server
 import JS
-
-data BlockVolumeIntersection = Disjoint | Contains | Intersects
-FromFFI BlockVolumeIntersection Double where
-	fromFFI 0 = Disjoint
-	fromFFI 1 = Contains
-	fromFFI 2 = Intersects
-ToFFI BlockVolumeIntersection Double where
-	toFFI Disjoint = 0
-	toFFI Contains = 1
-	toFFI Intersects = 2
-data CompoundBlockVolumeAction = Add | Subtract
-FromFFI CompoundBlockVolumeAction Double where
-	fromFFI 0 = Add
-	fromFFI 1 = Subtract
-ToFFI CompoundBlockVolumeAction Double where
-	toFFI Add = 0
-	toFFI Subtract = 1
-data Direction = Down | East | North | South | Up | West
-FromFFI Direction String where
-	fromFFI "Down" = Down
-	fromFFI "East" = East
-	fromFFI "North" = North
-	fromFFI "South" = South
-	fromFFI "Up" = Up
-	fromFFI "West" = West
-ToFFI Direction String where
-	toFFI Down = "Down"
-	toFFI East = "East"
-	toFFI North = "North"
-	toFFI South = "South"
-	toFFI Up = "Up"
-	toFFI West = "West"
-data DisplaySlotId = BelowName | List | Sidebar
-FromFFI DisplaySlotId String where
-	fromFFI "BelowName" = BelowName
-	fromFFI "List" = List
-	fromFFI "Sidebar" = Sidebar
-ToFFI DisplaySlotId String where
-	toFFI BelowName = "BelowName"
-	toFFI List = "List"
-	toFFI Sidebar = "Sidebar"
-data DyeColor = Black | Blue | Brown | Cyan | Gray | Green | LightBlue | Lime | Magenta | Orange | Pink | Purple | Red | Silver | White | Yellow
-FromFFI DyeColor String where
-	fromFFI "Black" = Black
-	fromFFI "Blue" = Blue
-	fromFFI "Brown" = Brown
-	fromFFI "Cyan" = Cyan
-	fromFFI "Gray" = Gray
-	fromFFI "Green" = Green
-	fromFFI "LightBlue" = LightBlue
-	fromFFI "Lime" = Lime
-	fromFFI "Magenta" = Magenta
-	fromFFI "Orange" = Orange
-	fromFFI "Pink" = Pink
-	fromFFI "Purple" = Purple
-	fromFFI "Red" = Red
-	fromFFI "Silver" = Silver
-	fromFFI "White" = White
-	fromFFI "Yellow" = Yellow
-ToFFI DyeColor String where
-	toFFI Black = "Black"
-	toFFI Blue = "Blue"
-	toFFI Brown = "Brown"
-	toFFI Cyan = "Cyan"
-	toFFI Gray = "Gray"
-	toFFI Green = "Green"
-	toFFI LightBlue = "LightBlue"
-	toFFI Lime = "Lime"
-	toFFI Magenta = "Magenta"
-	toFFI Orange = "Orange"
-	toFFI Pink = "Pink"
-	toFFI Purple = "Purple"
-	toFFI Red = "Red"
-	toFFI Silver = "Silver"
-	toFFI White = "White"
-	toFFI Yellow = "Yellow"
-data EasingType = InBack | InBounce | InCirc | InCubic | InElastic | InExpo | InOutBack | InOutBounce | InOutCirc | InOutCubic | InOutElastic | InOutExpo | InOutQuad | InOutQuart | InOutQuint | InOutSine | InQuad | InQuart | InQuint | InSine | Linear | OutBack | OutBounce | OutCirc | OutCubic | OutElastic | OutExpo | OutQuad | OutQuart | OutQuint | OutSine | Spring
-FromFFI EasingType String where
-	fromFFI "InBack" = InBack
-	fromFFI "InBounce" = InBounce
-	fromFFI "InCirc" = InCirc
-	fromFFI "InCubic" = InCubic
-	fromFFI "InElastic" = InElastic
-	fromFFI "InExpo" = InExpo
-	fromFFI "InOutBack" = InOutBack
-	fromFFI "InOutBounce" = InOutBounce
-	fromFFI "InOutCirc" = InOutCirc
-	fromFFI "InOutCubic" = InOutCubic
-	fromFFI "InOutElastic" = InOutElastic
-	fromFFI "InOutExpo" = InOutExpo
-	fromFFI "InOutQuad" = InOutQuad
-	fromFFI "InOutQuart" = InOutQuart
-	fromFFI "InOutQuint" = InOutQuint
-	fromFFI "InOutSine" = InOutSine
-	fromFFI "InQuad" = InQuad
-	fromFFI "InQuart" = InQuart
-	fromFFI "InQuint" = InQuint
-	fromFFI "InSine" = InSine
-	fromFFI "Linear" = Linear
-	fromFFI "OutBack" = OutBack
-	fromFFI "OutBounce" = OutBounce
-	fromFFI "OutCirc" = OutCirc
-	fromFFI "OutCubic" = OutCubic
-	fromFFI "OutElastic" = OutElastic
-	fromFFI "OutExpo" = OutExpo
-	fromFFI "OutQuad" = OutQuad
-	fromFFI "OutQuart" = OutQuart
-	fromFFI "OutQuint" = OutQuint
-	fromFFI "OutSine" = OutSine
-	fromFFI "Spring" = Spring
-ToFFI EasingType String where
-	toFFI InBack = "InBack"
-	toFFI InBounce = "InBounce"
-	toFFI InCirc = "InCirc"
-	toFFI InCubic = "InCubic"
-	toFFI InElastic = "InElastic"
-	toFFI InExpo = "InExpo"
-	toFFI InOutBack = "InOutBack"
-	toFFI InOutBounce = "InOutBounce"
-	toFFI InOutCirc = "InOutCirc"
-	toFFI InOutCubic = "InOutCubic"
-	toFFI InOutElastic = "InOutElastic"
-	toFFI InOutExpo = "InOutExpo"
-	toFFI InOutQuad = "InOutQuad"
-	toFFI InOutQuart = "InOutQuart"
-	toFFI InOutQuint = "InOutQuint"
-	toFFI InOutSine = "InOutSine"
-	toFFI InQuad = "InQuad"
-	toFFI InQuart = "InQuart"
-	toFFI InQuint = "InQuint"
-	toFFI InSine = "InSine"
-	toFFI Linear = "Linear"
-	toFFI OutBack = "OutBack"
-	toFFI OutBounce = "OutBounce"
-	toFFI OutCirc = "OutCirc"
-	toFFI OutCubic = "OutCubic"
-	toFFI OutElastic = "OutElastic"
-	toFFI OutExpo = "OutExpo"
-	toFFI OutQuad = "OutQuad"
-	toFFI OutQuart = "OutQuart"
-	toFFI OutQuint = "OutQuint"
-	toFFI OutSine = "OutSine"
-	toFFI Spring = "Spring"
-data EntityDamageCause = Anvil | BlockExplosion | Charging | Contact | Drowning | EntityAttack | EntityExplosion | Fall | FallingBlock | Fire | FireTick | Fireworks | FlyIntoWall | Freezing | Lava | Lightning | Magic | Magma | None | Override | Piston | Projectile | Stalactite | Stalagmite | Starve | Suffocation | Suicide | Temperature | Thorns | Void | Wither
-FromFFI EntityDamageCause String where
-	fromFFI "anvil" = Anvil
-	fromFFI "blockExplosion" = BlockExplosion
-	fromFFI "charging" = Charging
-	fromFFI "contact" = Contact
-	fromFFI "drowning" = Drowning
-	fromFFI "entityAttack" = EntityAttack
-	fromFFI "entityExplosion" = EntityExplosion
-	fromFFI "fall" = Fall
-	fromFFI "fallingBlock" = FallingBlock
-	fromFFI "fire" = Fire
-	fromFFI "fireTick" = FireTick
-	fromFFI "fireworks" = Fireworks
-	fromFFI "flyIntoWall" = FlyIntoWall
-	fromFFI "freezing" = Freezing
-	fromFFI "lava" = Lava
-	fromFFI "lightning" = Lightning
-	fromFFI "magic" = Magic
-	fromFFI "magma" = Magma
-	fromFFI "none" = None
-	fromFFI "override" = Override
-	fromFFI "piston" = Piston
-	fromFFI "projectile" = Projectile
-	fromFFI "stalactite" = Stalactite
-	fromFFI "stalagmite" = Stalagmite
-	fromFFI "starve" = Starve
-	fromFFI "suffocation" = Suffocation
-	fromFFI "suicide" = Suicide
-	fromFFI "temperature" = Temperature
-	fromFFI "thorns" = Thorns
-	fromFFI "void" = Void
-	fromFFI "wither" = Wither
-ToFFI EntityDamageCause String where
-	toFFI Anvil = "anvil"
-	toFFI BlockExplosion = "blockExplosion"
-	toFFI Charging = "charging"
-	toFFI Contact = "contact"
-	toFFI Drowning = "drowning"
-	toFFI EntityAttack = "entityAttack"
-	toFFI EntityExplosion = "entityExplosion"
-	toFFI Fall = "fall"
-	toFFI FallingBlock = "fallingBlock"
-	toFFI Fire = "fire"
-	toFFI FireTick = "fireTick"
-	toFFI Fireworks = "fireworks"
-	toFFI FlyIntoWall = "flyIntoWall"
-	toFFI Freezing = "freezing"
-	toFFI Lava = "lava"
-	toFFI Lightning = "lightning"
-	toFFI Magic = "magic"
-	toFFI Magma = "magma"
-	toFFI None = "none"
-	toFFI Override = "override"
-	toFFI Piston = "piston"
-	toFFI Projectile = "projectile"
-	toFFI Stalactite = "stalactite"
-	toFFI Stalagmite = "stalagmite"
-	toFFI Starve = "starve"
-	toFFI Suffocation = "suffocation"
-	toFFI Suicide = "suicide"
-	toFFI Temperature = "temperature"
-	toFFI Thorns = "thorns"
-	toFFI Void = "void"
-	toFFI Wither = "wither"
-data EntityLifetimeState = Loaded | Unloaded
-FromFFI EntityLifetimeState String where
-	fromFFI "Loaded" = Loaded
-	fromFFI "Unloaded" = Unloaded
-ToFFI EntityLifetimeState String where
-	toFFI Loaded = "Loaded"
-	toFFI Unloaded = "Unloaded"
-data EquipmentSlot = Chest | Feet | Head | Legs | Mainhand | Offhand
-FromFFI EquipmentSlot String where
-	fromFFI "chest" = Chest
-	fromFFI "feet" = Feet
-	fromFFI "head" = Head
-	fromFFI "legs" = Legs
-	fromFFI "mainhand" = Mainhand
-	fromFFI "offhand" = Offhand
-ToFFI EquipmentSlot String where
-	toFFI Chest = "chest"
-	toFFI Feet = "feet"
-	toFFI Head = "head"
-	toFFI Legs = "legs"
-	toFFI Mainhand = "mainhand"
-	toFFI Offhand = "offhand"
-data FluidType = Lava | Potion | PowderSnow | Water
-FromFFI FluidType String where
-	fromFFI "Lava" = Lava
-	fromFFI "Potion" = Potion
-	fromFFI "PowderSnow" = PowderSnow
-	fromFFI "Water" = Water
-ToFFI FluidType String where
-	toFFI Lava = "Lava"
-	toFFI Potion = "Potion"
-	toFFI PowderSnow = "PowderSnow"
-	toFFI Water = "Water"
-data GameMode = Adventure | Creative | Spectator | Survival
-FromFFI GameMode String where
-	fromFFI "adventure" = Adventure
-	fromFFI "creative" = Creative
-	fromFFI "spectator" = Spectator
-	fromFFI "survival" = Survival
-ToFFI GameMode String where
-	toFFI Adventure = "adventure"
-	toFFI Creative = "creative"
-	toFFI Spectator = "spectator"
-	toFFI Survival = "survival"
-data ItemLockMode = Inventory | None | Slot
-FromFFI ItemLockMode String where
-	fromFFI "inventory" = Inventory
-	fromFFI "none" = None
-	fromFFI "slot" = Slot
-ToFFI ItemLockMode String where
-	toFFI Inventory = "inventory"
-	toFFI None = "none"
-	toFFI Slot = "slot"
-data MoonPhase = FullMoon | WaningGibbous | FirstQuarter | WaningCrescent | NewMoon | WaxingCrescent | LastQuarter | WaxingGibbous
-FromFFI MoonPhase Double where
-	fromFFI 0 = FullMoon
-	fromFFI 1 = WaningGibbous
-	fromFFI 2 = FirstQuarter
-	fromFFI 3 = WaningCrescent
-	fromFFI 4 = NewMoon
-	fromFFI 5 = WaxingCrescent
-	fromFFI 6 = LastQuarter
-	fromFFI 7 = WaxingGibbous
-ToFFI MoonPhase Double where
-	toFFI FullMoon = 0
-	toFFI WaningGibbous = 1
-	toFFI FirstQuarter = 2
-	toFFI WaningCrescent = 3
-	toFFI NewMoon = 4
-	toFFI WaxingCrescent = 5
-	toFFI LastQuarter = 6
-	toFFI WaxingGibbous = 7
-data ObjectiveSortOrder = Ascending | Descending
-FromFFI ObjectiveSortOrder Double where
-	fromFFI 0 = Ascending
-	fromFFI 1 = Descending
-ToFFI ObjectiveSortOrder Double where
-	toFFI Ascending = 0
-	toFFI Descending = 1
-data ScoreboardIdentityType = Entity | FakePlayer | Player
-FromFFI ScoreboardIdentityType String where
-	fromFFI "Entity" = Entity
-	fromFFI "FakePlayer" = FakePlayer
-	fromFFI "Player" = Player
-ToFFI ScoreboardIdentityType String where
-	toFFI Entity = "Entity"
-	toFFI FakePlayer = "FakePlayer"
-	toFFI Player = "Player"
-data ScriptEventSource = Block | Entity | NPCDialogue | Server
-FromFFI ScriptEventSource String where
-	fromFFI "Block" = Block
-	fromFFI "Entity" = Entity
-	fromFFI "NPCDialogue" = NPCDialogue
-	fromFFI "Server" = Server
-ToFFI ScriptEventSource String where
-	toFFI Block = "Block"
-	toFFI Entity = "Entity"
-	toFFI NPCDialogue = "NPCDialogue"
-	toFFI Server = "Server"
-data SignSide = Back | Front
-FromFFI SignSide String where
-	fromFFI "Back" = Back
-	fromFFI "Front" = Front
-ToFFI SignSide String where
-	toFFI Back = "Back"
-	toFFI Front = "Front"
-data TimeOfDay = Day | Noon | Sunset | Night | Midnight | Sunrise
-FromFFI TimeOfDay Double where
-	fromFFI 1000 = Day
-	fromFFI 6000 = Noon
-	fromFFI 12000 = Sunset
-	fromFFI 13000 = Night
-	fromFFI 18000 = Midnight
-	fromFFI 23000 = Sunrise
-ToFFI TimeOfDay Double where
-	toFFI Day = 1000
-	toFFI Noon = 6000
-	toFFI Sunset = 12000
-	toFFI Night = 13000
-	toFFI Midnight = 18000
-	toFFI Sunrise = 23000
-data WatchdogTerminateReason = Hang | StackOverflow
-FromFFI WatchdogTerminateReason String where
-	fromFFI "Hang" = Hang
-	fromFFI "StackOverflow" = StackOverflow
-ToFFI WatchdogTerminateReason String where
-	toFFI Hang = "Hang"
-	toFFI StackOverflow = "StackOverflow"
-data WeatherType = Clear | Rain | Thunder
-FromFFI WeatherType String where
-	fromFFI "Clear" = Clear
-	fromFFI "Rain" = Rain
-	fromFFI "Thunder" = Thunder
-ToFFI WeatherType String where
-	toFFI Clear = "Clear"
-	toFFI Rain = "Rain"
-	toFFI Thunder = "Thunder"
+import MC.Provider
+export data BlockVolumeIntersection = MkBlockVolumeIntersection Double
+export data CompoundBlockVolumeAction = MkCompoundBlockVolumeAction Double
+export data Direction = MkDirection String
+export data DisplaySlotId = MkDisplaySlotId String
+export data DyeColor = MkDyeColor String
+export data EasingType = MkEasingType String
+export data EntityDamageCause = MkEntityDamageCause String
+export data EntityLifetimeState = MkEntityLifetimeState String
+export data EquipmentSlot = MkEquipmentSlot String
+export data FluidType = MkFluidType String
+export data GameMode = MkGameMode String
+export data ItemLockMode = MkItemLockMode String
+export data MoonPhase = MkMoonPhase Double
+export data ObjectiveSortOrder = MkObjectiveSortOrder Double
+export data ScoreboardIdentityType = MkScoreboardIdentityType String
+export data ScriptEventSource = MkScriptEventSource String
+export data SignSide = MkSignSide String
+export data TimeOfDay = MkTimeOfDay Double
+export data WatchdogTerminateReason = MkWatchdogTerminateReason String
+export data WeatherType = MkWeatherType String
 export data BlockFillOptions : Type where [external]
 export data BlockHitInformation : Type where [external]
 export data BlockRaycastHit : Type where [external]
@@ -388,6 +65,15 @@ export data TitleDisplayOptions : Type where [external]
 export data Vector2 : Type where [external]
 export data Vector3 : Type where [external]
 export data WorldSoundOptions : Type where [external]
+export data Error : Type where [external]
+namespace Error
+    export
+    %foreign (get_var "name")
+    name : Error -> String
+    %foreign (get_var "message")
+    message : Error -> String
+    %foreign (get_var "stack")
+    stack : Error -> UndefOr String
 export data Block : Type where [external]
 export data BlockAreaSize : Type where [external]
 export data BlockBreakAfterEvent : Type where [external]
@@ -632,43 +318,43 @@ export data LocationInUnloadedChunkError : Type where [external]
 export data LocationOutOfWorldBoundariesError : Type where [external]
 namespace Block
 	export
-	%foreign (fn_call 3 "canPlace")
-	canPlace : Block -> Union3 String BlockPermutation BlockType -> Direction -> Boolean
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.canPlace($1,$2)")
+	canPlace : Block -> String -> Direction -> Boolean
 	export
-	%foreign (fn_call 2 "getComponent")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getComponent($1)")
 	getComponent : Block -> String -> BlockComponent
 	export
-	%foreign (fn_call 3 "getItemStack")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.getItemStack($1,$2)")
 	getItemStack : Block -> Double -> Boolean -> ItemStack
 	export
-	%foreign (fn_call 1 "getRedstonePower")
+	%foreign (ffi_tag "($0) => $0 && $0.getRedstonePower()")
 	getRedstonePower : Block -> Double
 	export
-	%foreign (fn_call 1 "getTags")
-	getTags : Block -> Array (String)
+	%foreign (ffi_tag "($0) => $0 && $0.getTags()")
+	getTags : Block -> (Array (String))
 	export
-	%foreign (fn_call 2 "hasTag")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.hasTag($1)")
 	hasTag : Block -> String -> Boolean
 	export
-	%foreign (fn_call 1 "isAir")
+	%foreign (ffi_tag "($0) => $0 && $0.isAir()")
 	isAir : Block -> Boolean
 	export
-	%foreign (fn_call 1 "isLiquid")
+	%foreign (ffi_tag "($0) => $0 && $0.isLiquid()")
 	isLiquid : Block -> Boolean
 	export
-	%foreign (fn_call 1 "isSolid")
+	%foreign (ffi_tag "($0) => $0 && $0.isSolid()")
 	isSolid : Block -> Boolean
 	export
-	%foreign (fn_call 1 "isValid")
+	%foreign (ffi_tag "($0) => $0 && $0.isValid()")
 	isValid : Block -> Boolean
 	export
-	%foreign (fn_call 2 "setPermutation")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setPermutation($1)")
 	setPermutation : Block -> BlockPermutation -> IO ()
 	export
-	%foreign (fn_call 2 "setType")
-	setType : Block -> Union2 String BlockType -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setType($1)")
+	setType : Block -> String -> IO ()
 	export
-	%foreign (fn_call 2 "trySetPermutation")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.trySetPermutation($1)")
 	trySetPermutation : Block -> BlockPermutation -> Boolean
 	export
 	%foreign (get_var "dimension")
@@ -677,7 +363,7 @@ namespace Block
 	%foreign (get_var "isWaterlogged")
 	isWaterlogged : Block -> Boolean
 	export
-	%foreign (update_var "set_isWaterlogged")
+	%foreign (update_var "isWaterlogged")
 	set_isWaterlogged : Block -> Boolean -> IO ()
 	export
 	%foreign (get_var "location")
@@ -705,28 +391,28 @@ namespace Block
 	asVector3 : Block -> Vector3
 namespace BlockAreaSize
 	export
-	%foreign (cons_new "BlockAreaSize")
+	%foreign (ffi_tag "($0,$1,$2) => new BlockAreaSize($0,$1,$2)")
 	MkBlockAreaSize : Double -> Double -> Double -> BlockAreaSize
 	export
-	%foreign (fn_call 2 "equals")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.equals($1)")
 	equals : BlockAreaSize -> BlockAreaSize -> Boolean
 	export
 	%foreign (get_var "x")
 	x : BlockAreaSize -> Double
 	export
-	%foreign (update_var "set_x")
+	%foreign (update_var "x")
 	set_x : BlockAreaSize -> Double -> IO ()
 	export
 	%foreign (get_var "y")
 	y : BlockAreaSize -> Double
 	export
-	%foreign (update_var "set_y")
+	%foreign (update_var "y")
 	set_y : BlockAreaSize -> Double -> IO ()
 	export
 	%foreign (get_var "z")
 	z : BlockAreaSize -> Double
 	export
-	%foreign (update_var "set_z")
+	%foreign (update_var "z")
 	set_z : BlockAreaSize -> Double -> IO ()
 	export
 	%foreign id_as
@@ -743,10 +429,10 @@ namespace BlockBreakAfterEvent
 	asBlockEvent : BlockBreakAfterEvent -> BlockEvent
 namespace BlockBreakAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : BlockBreakAfterEventSignal -> (BlockBreakAfterEvent -> IO ()) -> (BlockBreakAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : BlockBreakAfterEventSignal -> (BlockBreakAfterEvent -> IO ()) -> IO (BlockBreakAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : BlockBreakAfterEventSignal -> (BlockBreakAfterEvent -> IO ()) -> IO ()
 namespace BlockComponent
 	export
@@ -780,10 +466,10 @@ namespace BlockExplodeAfterEvent
 	asBlockEvent : BlockExplodeAfterEvent -> BlockEvent
 namespace BlockExplodeAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : BlockExplodeAfterEventSignal -> (BlockExplodeAfterEvent -> IO ()) -> (BlockExplodeAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : BlockExplodeAfterEventSignal -> (BlockExplodeAfterEvent -> IO ()) -> IO (BlockExplodeAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : BlockExplodeAfterEventSignal -> (BlockExplodeAfterEvent -> IO ()) -> IO ()
 namespace BlockInventoryComponent
 	export
@@ -804,52 +490,52 @@ namespace BlockLavaContainerComponent
 	asBlockLiquidContainerComponent : BlockLavaContainerComponent -> BlockLiquidContainerComponent
 namespace BlockLiquidContainerComponent
 	export
-	%foreign (fn_call 1 "isValidLiquid")
+	%foreign (ffi_tag "($0) => $0 && $0.isValidLiquid()")
 	isValidLiquid : BlockLiquidContainerComponent -> Boolean
 	export
 	%foreign (get_var "fillLevel")
 	fillLevel : BlockLiquidContainerComponent -> Double
 	export
-	%foreign (update_var "set_fillLevel")
+	%foreign (update_var "fillLevel")
 	set_fillLevel : BlockLiquidContainerComponent -> Double -> IO ()
 	export
 	%foreign id_as
 	asBlockComponent : BlockLiquidContainerComponent -> BlockComponent
 namespace BlockPermutation
 	export
-	%foreign (fn_call 1 "clone")
+	%foreign (ffi_tag "($0) => $0 && $0.clone()")
 	clone : BlockPermutation -> BlockPermutation
 	export
-	%foreign (fn_call 1 "getAllStates")
-	getAllStates : BlockPermutation -> Record String (Union3 String Number Boolean)
+	%foreign (ffi_tag "($0) => $0 && $0.getAllStates()")
+	getAllStates : BlockPermutation -> Record String (Union3 String Double Boolean)
 	export
-	%foreign (fn_call 2 "getItemStack")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getItemStack($1)")
 	getItemStack : BlockPermutation -> Double -> ItemStack
 	export
-	%foreign (fn_call 2 "getState")
-	getState : BlockPermutation -> String -> Union3 String Double Boolean
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getState($1)")
+	getState : BlockPermutation -> String -> String
 	export
-	%foreign (fn_call 1 "getTags")
-	getTags : BlockPermutation -> Array (String)
+	%foreign (ffi_tag "($0) => $0 && $0.getTags()")
+	getTags : BlockPermutation -> (Array (String))
 	export
-	%foreign (fn_call 2 "hasTag")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.hasTag($1)")
 	hasTag : BlockPermutation -> String -> Boolean
 	export
-	%foreign (fn_call 3 "matches")
-	matches : BlockPermutation -> String -> Record String (Union3 String Number Boolean) -> Boolean
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.matches($1,$2)")
+	matches : BlockPermutation -> String -> Record String (Union3 String Double Boolean) -> Boolean
 	export
-	%foreign (fn_call 3 "withState")
-	withState : BlockPermutation -> String -> Union3 String Double Boolean -> BlockPermutation
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.withState($1,$2)")
+	withState : BlockPermutation -> String -> String -> BlockPermutation
 	export
-	%foreign (fn_call 3 "resolve")
-	resolve : BlockPermutation -> String -> Record String (Union3 String Number Boolean) -> BlockPermutation
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.resolve($1,$2)")
+	resolve : BlockPermutation -> String -> Record String (Union3 String Double Boolean) -> BlockPermutation
 	export
 	%foreign (get_var "type")
 	type : BlockPermutation -> BlockType
 namespace BlockPistonComponent
 	export
-	%foreign (fn_call 1 "getAttachedBlocks")
-	getAttachedBlocks : BlockPistonComponent -> Array (Vector3)
+	%foreign (ffi_tag "($0) => $0 && $0.getAttachedBlocks()")
+	getAttachedBlocks : BlockPistonComponent -> (Array (Vector3))
 	export
 	%foreign (get_var "isExpanded")
 	isExpanded : BlockPistonComponent -> Boolean
@@ -880,14 +566,14 @@ namespace BlockPlaceAfterEvent
 	asBlockEvent : BlockPlaceAfterEvent -> BlockEvent
 namespace BlockPlaceAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : BlockPlaceAfterEventSignal -> (BlockPlaceAfterEvent -> IO ()) -> (BlockPlaceAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : BlockPlaceAfterEventSignal -> (BlockPlaceAfterEvent -> IO ()) -> IO (BlockPlaceAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : BlockPlaceAfterEventSignal -> (BlockPlaceAfterEvent -> IO ()) -> IO ()
 namespace BlockPotionContainerComponent
 	export
-	%foreign (fn_call 2 "setPotionType")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setPotionType($1)")
 	setPotionType : BlockPotionContainerComponent -> ItemStack -> IO ()
 	export
 	%foreign (get_var "componentId")
@@ -897,13 +583,13 @@ namespace BlockPotionContainerComponent
 	asBlockLiquidContainerComponent : BlockPotionContainerComponent -> BlockLiquidContainerComponent
 namespace BlockRecordPlayerComponent
 	export
-	%foreign (fn_call 1 "clearRecord")
+	%foreign (ffi_tag "($0) => $0 && $0.clearRecord()")
 	clearRecord : BlockRecordPlayerComponent -> IO ()
 	export
-	%foreign (fn_call 1 "isPlaying")
+	%foreign (ffi_tag "($0) => $0 && $0.isPlaying()")
 	isPlaying : BlockRecordPlayerComponent -> Boolean
 	export
-	%foreign (fn_call 2 "setRecord")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setRecord($1)")
 	setRecord : BlockRecordPlayerComponent -> ItemType -> IO ()
 	export
 	%foreign (get_var "componentId")
@@ -913,22 +599,22 @@ namespace BlockRecordPlayerComponent
 	asBlockComponent : BlockRecordPlayerComponent -> BlockComponent
 namespace BlockSignComponent
 	export
-	%foreign (fn_call 2 "getRawText")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getRawText($1)")
 	getRawText : BlockSignComponent -> SignSide -> RawText
 	export
-	%foreign (fn_call 2 "getText")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getText($1)")
 	getText : BlockSignComponent -> SignSide -> String
 	export
-	%foreign (fn_call 2 "getTextDyeColor")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getTextDyeColor($1)")
 	getTextDyeColor : BlockSignComponent -> SignSide -> DyeColor
 	export
-	%foreign (fn_call 3 "setText")
-	setText : BlockSignComponent -> Union3 String RawText RawMessage -> SignSide -> IO ()
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.setText($1,$2)")
+	setText : BlockSignComponent -> String -> SignSide -> IO ()
 	export
-	%foreign (fn_call 3 "setTextDyeColor")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.setTextDyeColor($1,$2)")
 	setTextDyeColor : BlockSignComponent -> DyeColor -> SignSide -> IO ()
 	export
-	%foreign (fn_call 1 "setWaxed")
+	%foreign (ffi_tag "($0) => $0 && $0.setWaxed()")
 	setWaxed : BlockSignComponent -> IO ()
 	export
 	%foreign (get_var "isWaxed")
@@ -948,18 +634,18 @@ namespace BlockSnowContainerComponent
 	asBlockLiquidContainerComponent : BlockSnowContainerComponent -> BlockLiquidContainerComponent
 namespace BlockStates
 	export
-	%foreign (fn_call 2 "get")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.get($1)")
 	get : BlockStates -> String -> BlockStateType
 	export
-	%foreign (fn_call 1 "getAll")
-	getAll : BlockStates -> Array (BlockStateType)
+	%foreign (ffi_tag "($0) => $0 && $0.getAll()")
+	getAll : BlockStates -> (Array (BlockStateType))
 namespace BlockStateType
 	export
 	%foreign (get_var "id")
 	id : BlockStateType -> String
 	export
 	%foreign (get_var "validValues")
-	validValues : BlockStateType -> Array (Union3 String Double Boolean)
+	validValues : BlockStateType -> (Array (String))
 namespace BlockType
 	export
 	%foreign (get_var "canBeWaterlogged")
@@ -969,57 +655,54 @@ namespace BlockType
 	id : BlockType -> String
 namespace BlockTypes
 	export
-	%foreign (fn_call 2 "get")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.get($1)")
 	get : BlockTypes -> String -> BlockType
 	export
-	%foreign (fn_call 1 "getAll")
-	getAll : BlockTypes -> Array (BlockType)
+	%foreign (ffi_tag "($0) => $0 && $0.getAll()")
+	getAll : BlockTypes -> (Array (BlockType))
 namespace BlockVolumeUtils
 	export
-	%foreign (fn_call 3 "doesLocationTouchFaces")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.doesLocationTouchFaces($1,$2)")
 	doesLocationTouchFaces : BlockVolumeUtils -> BlockVolume -> Vector3 -> Boolean
 	export
-	%foreign (fn_call 3 "doesVolumeTouchFaces")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.doesVolumeTouchFaces($1,$2)")
 	doesVolumeTouchFaces : BlockVolumeUtils -> BlockVolume -> BlockVolume -> Boolean
 	export
-	%foreign (fn_call 3 "equals")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.equals($1,$2)")
 	equals : BlockVolumeUtils -> BlockVolume -> BlockVolume -> Boolean
 	export
-	%foreign (fn_call 2 "getBlockLocationIterator")
-	getBlockLocationIterator : BlockVolumeUtils -> BlockVolume -> BlockLocationIterator
-	export
-	%foreign (fn_call 2 "getBoundingBox")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getBoundingBox($1)")
 	getBoundingBox : BlockVolumeUtils -> BlockVolume -> BoundingBox
 	export
-	%foreign (fn_call 2 "getCapacity")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getCapacity($1)")
 	getCapacity : BlockVolumeUtils -> BlockVolume -> Double
 	export
-	%foreign (fn_call 2 "getMax")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getMax($1)")
 	getMax : BlockVolumeUtils -> BlockVolume -> Vector3
 	export
-	%foreign (fn_call 2 "getMin")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getMin($1)")
 	getMin : BlockVolumeUtils -> BlockVolume -> Vector3
 	export
-	%foreign (fn_call 2 "getSpan")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getSpan($1)")
 	getSpan : BlockVolumeUtils -> BlockVolume -> Vector3
 	export
-	%foreign (fn_call 3 "intersects")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.intersects($1,$2)")
 	intersects : BlockVolumeUtils -> BlockVolume -> BlockVolume -> BlockVolumeIntersection
 	export
-	%foreign (fn_call 3 "isInside")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.isInside($1,$2)")
 	isInside : BlockVolumeUtils -> BlockVolume -> Vector3 -> Boolean
 	export
-	%foreign (fn_call 3 "translate")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.translate($1,$2)")
 	translate : BlockVolumeUtils -> BlockVolume -> Vector3 -> BlockVolume
 namespace BlockWaterContainerComponent
 	export
-	%foreign (fn_call 2 "addDye")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.addDye($1)")
 	addDye : BlockWaterContainerComponent -> ItemType -> IO ()
 	export
-	%foreign (fn_call 1 "getCustomColor")
+	%foreign (ffi_tag "($0) => $0 && $0.getCustomColor()")
 	getCustomColor : BlockWaterContainerComponent -> Color
 	export
-	%foreign (fn_call 2 "setCustomColor")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setCustomColor($1)")
 	setCustomColor : BlockWaterContainerComponent -> Color -> IO ()
 	export
 	%foreign (get_var "componentId")
@@ -1029,37 +712,37 @@ namespace BlockWaterContainerComponent
 	asBlockLiquidContainerComponent : BlockWaterContainerComponent -> BlockLiquidContainerComponent
 namespace BoundingBoxUtils
 	export
-	%foreign (fn_call 3 "createValid")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.createValid($1,$2)")
 	createValid : BoundingBoxUtils -> Vector3 -> Vector3 -> BoundingBox
 	export
-	%foreign (fn_call 3 "dilate")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.dilate($1,$2)")
 	dilate : BoundingBoxUtils -> BoundingBox -> Vector3 -> BoundingBox
 	export
-	%foreign (fn_call 3 "equals")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.equals($1,$2)")
 	equals : BoundingBoxUtils -> BoundingBox -> BoundingBox -> Boolean
 	export
-	%foreign (fn_call 3 "expand")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.expand($1,$2)")
 	expand : BoundingBoxUtils -> BoundingBox -> BoundingBox -> BoundingBox
 	export
-	%foreign (fn_call 2 "getCenter")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getCenter($1)")
 	getCenter : BoundingBoxUtils -> BoundingBox -> Vector3
 	export
-	%foreign (fn_call 3 "getIntersection")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.getIntersection($1,$2)")
 	getIntersection : BoundingBoxUtils -> BoundingBox -> BoundingBox -> BoundingBox
 	export
-	%foreign (fn_call 2 "getSpan")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getSpan($1)")
 	getSpan : BoundingBoxUtils -> BoundingBox -> Vector3
 	export
-	%foreign (fn_call 3 "intersects")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.intersects($1,$2)")
 	intersects : BoundingBoxUtils -> BoundingBox -> BoundingBox -> Boolean
 	export
-	%foreign (fn_call 3 "isInside")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.isInside($1,$2)")
 	isInside : BoundingBoxUtils -> BoundingBox -> Vector3 -> Boolean
 	export
-	%foreign (fn_call 2 "isValid")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.isValid($1)")
 	isValid : BoundingBoxUtils -> BoundingBox -> Boolean
 	export
-	%foreign (fn_call 3 "translate")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.translate($1,$2)")
 	translate : BoundingBoxUtils -> BoundingBox -> Vector3 -> BoundingBox
 namespace ButtonPushAfterEvent
 	export
@@ -1074,62 +757,62 @@ namespace ButtonPushAfterEventSignal
 	asIButtonPushAfterEventSignal : ButtonPushAfterEventSignal -> IButtonPushAfterEventSignal
 namespace Camera
 	export
-	%foreign (fn_call 1 "clear")
+	%foreign (ffi_tag "($0) => $0 && $0.clear()")
 	clear : Camera -> IO ()
 	export
-	%foreign (fn_call 2 "fade")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.fade($1)")
 	fade : Camera -> CameraFadeOptions -> IO ()
 	export
-	%foreign (fn_call 3 "setCamera")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.setCamera($1,$2)")
 	setCamera : Camera -> String -> Union5 ScriptCameraDefaultOptions ScriptCameraSetFacingOptions ScriptCameraSetLocationOptions ScriptCameraSetPosOptions ScriptCameraSetRotOptions -> IO ()
 namespace ChatSendAfterEvent
 	export
-	%foreign (fn_call 1 "getTargets")
-	getTargets : ChatSendAfterEvent -> Array (Player)
+	%foreign (ffi_tag "($0) => $0 && $0.getTargets()")
+	getTargets : ChatSendAfterEvent -> (Array (Player))
 	export
 	%foreign (get_var "message")
 	message : ChatSendAfterEvent -> String
 	export
-	%foreign (update_var "set_message")
+	%foreign (update_var "message")
 	set_message : ChatSendAfterEvent -> String -> IO ()
 	export
 	%foreign (get_var "sender")
 	sender : ChatSendAfterEvent -> Player
 	export
-	%foreign (update_var "set_sender")
+	%foreign (update_var "sender")
 	set_sender : ChatSendAfterEvent -> Player -> IO ()
 	export
 	%foreign (get_var "sendToTargets")
 	sendToTargets : ChatSendAfterEvent -> Boolean
 	export
-	%foreign (update_var "set_sendToTargets")
+	%foreign (update_var "sendToTargets")
 	set_sendToTargets : ChatSendAfterEvent -> Boolean -> IO ()
 namespace ChatSendAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ChatSendAfterEventSignal -> (ChatSendAfterEvent -> IO ()) -> (ChatSendAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ChatSendAfterEventSignal -> (ChatSendAfterEvent -> IO ()) -> IO (ChatSendAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ChatSendAfterEventSignal -> (ChatSendAfterEvent -> IO ()) -> IO ()
 namespace ChatSendBeforeEvent
 	export
-	%foreign (fn_call 2 "setTargets")
-	setTargets : ChatSendBeforeEvent -> Array (Player) -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setTargets($1)")
+	setTargets : ChatSendBeforeEvent -> (Array (Player)) -> IO ()
 	export
 	%foreign (get_var "cancel")
 	cancel : ChatSendBeforeEvent -> Boolean
 	export
-	%foreign (update_var "set_cancel")
+	%foreign (update_var "cancel")
 	set_cancel : ChatSendBeforeEvent -> Boolean -> IO ()
 	export
 	%foreign id_as
 	asChatSendAfterEvent : ChatSendBeforeEvent -> ChatSendAfterEvent
 namespace ChatSendBeforeEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ChatSendBeforeEventSignal -> (ChatSendBeforeEvent -> IO ()) -> (ChatSendBeforeEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ChatSendBeforeEventSignal -> (ChatSendBeforeEvent -> IO ()) -> IO (ChatSendBeforeEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ChatSendBeforeEventSignal -> (ChatSendBeforeEvent -> IO ()) -> IO ()
 namespace CommandResult
 	export
@@ -1137,44 +820,41 @@ namespace CommandResult
 	successCount : CommandResult -> Double
 namespace Component
 	export
-	%foreign (fn_call 1 "isValid")
+	%foreign (ffi_tag "($0) => $0 && $0.isValid()")
 	isValid : Component -> Boolean
 	export
 	%foreign (get_var "typeId")
 	typeId : Component -> String
 namespace CompoundBlockVolume
 	export
-	%foreign (fn_call 1 "clear")
+	%foreign (ffi_tag "($0) => $0 && $0.clear()")
 	clear : CompoundBlockVolume -> IO ()
 	export
-	%foreign (fn_call 1 "getBlockLocationIterator")
-	getBlockLocationIterator : CompoundBlockVolume -> BlockLocationIterator
-	export
-	%foreign (fn_call 1 "getBoundingBox")
+	%foreign (ffi_tag "($0) => $0 && $0.getBoundingBox()")
 	getBoundingBox : CompoundBlockVolume -> BoundingBox
 	export
-	%foreign (fn_call 1 "getMax")
+	%foreign (ffi_tag "($0) => $0 && $0.getMax()")
 	getMax : CompoundBlockVolume -> Vector3
 	export
-	%foreign (fn_call 1 "getMin")
+	%foreign (ffi_tag "($0) => $0 && $0.getMin()")
 	getMin : CompoundBlockVolume -> Vector3
 	export
-	%foreign (fn_call 2 "isInside")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.isInside($1)")
 	isInside : CompoundBlockVolume -> Vector3 -> Boolean
 	export
-	%foreign (fn_call 1 "peekLastVolume")
+	%foreign (ffi_tag "($0) => $0 && $0.peekLastVolume()")
 	peekLastVolume : CompoundBlockVolume -> CompoundBlockVolumeItem
 	export
-	%foreign (fn_call 1 "popVolume")
+	%foreign (ffi_tag "($0) => $0 && $0.popVolume()")
 	popVolume : CompoundBlockVolume -> Boolean
 	export
-	%foreign (fn_call 2 "pushVolume")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.pushVolume($1)")
 	pushVolume : CompoundBlockVolume -> CompoundBlockVolumeItem -> IO ()
 	export
-	%foreign (fn_call 2 "replaceOrAddLastVolume")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.replaceOrAddLastVolume($1)")
 	replaceOrAddLastVolume : CompoundBlockVolume -> CompoundBlockVolumeItem -> Boolean
 	export
-	%foreign (fn_call 2 "translate")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.translate($1)")
 	translate : CompoundBlockVolume -> Vector3 -> IO ()
 	export
 	%foreign (get_var "capacity")
@@ -1184,31 +864,31 @@ namespace CompoundBlockVolume
 	volumeCount : CompoundBlockVolume -> Double
 namespace Container
 	export
-	%foreign (fn_call 2 "addItem")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.addItem($1)")
 	addItem : Container -> ItemStack -> ItemStack
 	export
-	%foreign (fn_call 1 "clearAll")
+	%foreign (ffi_tag "($0) => $0 && $0.clearAll()")
 	clearAll : Container -> IO ()
 	export
-	%foreign (fn_call 2 "getItem")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getItem($1)")
 	getItem : Container -> Double -> ItemStack
 	export
-	%foreign (fn_call 2 "getSlot")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getSlot($1)")
 	getSlot : Container -> Double -> ContainerSlot
 	export
-	%foreign (fn_call 1 "isValid")
+	%foreign (ffi_tag "($0) => $0 && $0.isValid()")
 	isValid : Container -> Boolean
 	export
-	%foreign (fn_call 4 "moveItem")
+	%foreign (ffi_tag "($0,$1,$2,$3) => $0 && $0.moveItem($1,$2,$3)")
 	moveItem : Container -> Double -> Double -> Container -> IO ()
 	export
-	%foreign (fn_call 3 "setItem")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.setItem($1,$2)")
 	setItem : Container -> Double -> ItemStack -> IO ()
 	export
-	%foreign (fn_call 4 "swapItems")
+	%foreign (ffi_tag "($0,$1,$2,$3) => $0 && $0.swapItems($1,$2,$3)")
 	swapItems : Container -> Double -> Double -> Container -> IO ()
 	export
-	%foreign (fn_call 3 "transferItem")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.transferItem($1,$2)")
 	transferItem : Container -> Double -> Container -> ItemStack
 	export
 	%foreign (get_var "emptySlotsCount")
@@ -1218,40 +898,40 @@ namespace Container
 	size : Container -> Double
 namespace ContainerSlot
 	export
-	%foreign (fn_call 1 "getItem")
+	%foreign (ffi_tag "($0) => $0 && $0.getItem()")
 	getItem : ContainerSlot -> ItemStack
 	export
-	%foreign (fn_call 1 "getLore")
-	getLore : ContainerSlot -> Array (String)
+	%foreign (ffi_tag "($0) => $0 && $0.getLore()")
+	getLore : ContainerSlot -> (Array (String))
 	export
-	%foreign (fn_call 1 "getTags")
-	getTags : ContainerSlot -> Array (String)
+	%foreign (ffi_tag "($0) => $0 && $0.getTags()")
+	getTags : ContainerSlot -> (Array (String))
 	export
-	%foreign (fn_call 2 "hasTag")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.hasTag($1)")
 	hasTag : ContainerSlot -> String -> Boolean
 	export
-	%foreign (fn_call 2 "isStackableWith")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.isStackableWith($1)")
 	isStackableWith : ContainerSlot -> ItemStack -> Boolean
 	export
-	%foreign (fn_call 1 "isValid")
+	%foreign (ffi_tag "($0) => $0 && $0.isValid()")
 	isValid : ContainerSlot -> Boolean
 	export
-	%foreign (fn_call 2 "setCanDestroy")
-	setCanDestroy : ContainerSlot -> Array (String) -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setCanDestroy($1)")
+	setCanDestroy : ContainerSlot -> (Array (String)) -> IO ()
 	export
-	%foreign (fn_call 2 "setCanPlaceOn")
-	setCanPlaceOn : ContainerSlot -> Array (String) -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setCanPlaceOn($1)")
+	setCanPlaceOn : ContainerSlot -> (Array (String)) -> IO ()
 	export
-	%foreign (fn_call 2 "setItem")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setItem($1)")
 	setItem : ContainerSlot -> ItemStack -> IO ()
 	export
-	%foreign (fn_call 2 "setLore")
-	setLore : ContainerSlot -> Array (String) -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setLore($1)")
+	setLore : ContainerSlot -> (Array (String)) -> IO ()
 	export
 	%foreign (get_var "amount")
 	amount : ContainerSlot -> Double
 	export
-	%foreign (update_var "set_amount")
+	%foreign (update_var "amount")
 	set_amount : ContainerSlot -> Double -> IO ()
 	export
 	%foreign (get_var "isStackable")
@@ -1260,13 +940,13 @@ namespace ContainerSlot
 	%foreign (get_var "keepOnDeath")
 	keepOnDeath : ContainerSlot -> Boolean
 	export
-	%foreign (update_var "set_keepOnDeath")
+	%foreign (update_var "keepOnDeath")
 	set_keepOnDeath : ContainerSlot -> Boolean -> IO ()
 	export
 	%foreign (get_var "lockMode")
 	lockMode : ContainerSlot -> ItemLockMode
 	export
-	%foreign (update_var "set_lockMode")
+	%foreign (update_var "lockMode")
 	set_lockMode : ContainerSlot -> ItemLockMode -> IO ()
 	export
 	%foreign (get_var "maxAmount")
@@ -1275,7 +955,7 @@ namespace ContainerSlot
 	%foreign (get_var "nameTag")
 	nameTag : ContainerSlot -> String
 	export
-	%foreign (update_var "set_nameTag")
+	%foreign (update_var "nameTag")
 	set_nameTag : ContainerSlot -> String -> IO ()
 	export
 	%foreign (get_var "type")
@@ -1285,8 +965,8 @@ namespace ContainerSlot
 	typeId : ContainerSlot -> String
 namespace DataDrivenEntityTriggerAfterEvent
 	export
-	%foreign (fn_call 1 "getModifiers")
-	getModifiers : DataDrivenEntityTriggerAfterEvent -> Array (DefinitionModifier)
+	%foreign (ffi_tag "($0) => $0 && $0.getModifiers()")
+	getModifiers : DataDrivenEntityTriggerAfterEvent -> (Array (DefinitionModifier))
 	export
 	%foreign (get_var "entity")
 	entity : DataDrivenEntityTriggerAfterEvent -> Entity
@@ -1298,23 +978,23 @@ namespace DataDrivenEntityTriggerAfterEvent
 	asEntityRaycastHit : DataDrivenEntityTriggerAfterEvent -> EntityRaycastHit
 namespace DataDrivenEntityTriggerAfterEventSignal
 	export
-	%foreign (fn_call 3 "subscribe")
-	subscribe : DataDrivenEntityTriggerAfterEventSignal -> (DataDrivenEntityTriggerAfterEvent -> IO ()) -> EntityDataDrivenTriggerEventOptions -> (DataDrivenEntityTriggerAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.subscribe($1,$2)")
+	subscribe : DataDrivenEntityTriggerAfterEventSignal -> (DataDrivenEntityTriggerAfterEvent -> IO ()) -> EntityDataDrivenTriggerEventOptions -> IO (DataDrivenEntityTriggerAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : DataDrivenEntityTriggerAfterEventSignal -> (DataDrivenEntityTriggerAfterEvent -> IO ()) -> IO ()
 namespace DataDrivenEntityTriggerBeforeEvent
 	export
-	%foreign (fn_call 1 "getModifiers")
-	getModifiers : DataDrivenEntityTriggerBeforeEvent -> Array (DefinitionModifier)
+	%foreign (ffi_tag "($0) => $0 && $0.getModifiers()")
+	getModifiers : DataDrivenEntityTriggerBeforeEvent -> (Array (DefinitionModifier))
 	export
-	%foreign (fn_call 2 "setModifiers")
-	setModifiers : DataDrivenEntityTriggerBeforeEvent -> Array (DefinitionModifier) -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setModifiers($1)")
+	setModifiers : DataDrivenEntityTriggerBeforeEvent -> (Array (DefinitionModifier)) -> IO ()
 	export
 	%foreign (get_var "cancel")
 	cancel : DataDrivenEntityTriggerBeforeEvent -> Boolean
 	export
-	%foreign (update_var "set_cancel")
+	%foreign (update_var "cancel")
 	set_cancel : DataDrivenEntityTriggerBeforeEvent -> Boolean -> IO ()
 	export
 	%foreign (get_var "entity")
@@ -1327,72 +1007,72 @@ namespace DataDrivenEntityTriggerBeforeEvent
 	asEntityRaycastHit : DataDrivenEntityTriggerBeforeEvent -> EntityRaycastHit
 namespace DataDrivenEntityTriggerBeforeEventSignal
 	export
-	%foreign (fn_call 3 "subscribe")
-	subscribe : DataDrivenEntityTriggerBeforeEventSignal -> (DataDrivenEntityTriggerBeforeEvent -> IO ()) -> EntityDataDrivenTriggerEventOptions -> (DataDrivenEntityTriggerBeforeEvent -> IO ())
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.subscribe($1,$2)")
+	subscribe : DataDrivenEntityTriggerBeforeEventSignal -> (DataDrivenEntityTriggerBeforeEvent -> IO ()) -> EntityDataDrivenTriggerEventOptions -> IO (DataDrivenEntityTriggerBeforeEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : DataDrivenEntityTriggerBeforeEventSignal -> (DataDrivenEntityTriggerBeforeEvent -> IO ()) -> IO ()
 namespace DefinitionModifier
 	export
-	%foreign (fn_call 1 "getComponentGroupsToAdd")
-	getComponentGroupsToAdd : DefinitionModifier -> Array (String)
+	%foreign (ffi_tag "($0) => $0 && $0.getComponentGroupsToAdd()")
+	getComponentGroupsToAdd : DefinitionModifier -> (Array (String))
 	export
-	%foreign (fn_call 1 "getComponentGroupsToRemove")
-	getComponentGroupsToRemove : DefinitionModifier -> Array (String)
+	%foreign (ffi_tag "($0) => $0 && $0.getComponentGroupsToRemove()")
+	getComponentGroupsToRemove : DefinitionModifier -> (Array (String))
 	export
-	%foreign (fn_call 1 "getTriggers")
-	getTriggers : DefinitionModifier -> Array (Trigger)
+	%foreign (ffi_tag "($0) => $0 && $0.getTriggers()")
+	getTriggers : DefinitionModifier -> (Array (Trigger))
 	export
-	%foreign (fn_call 2 "setComponentGroupsToAdd")
-	setComponentGroupsToAdd : DefinitionModifier -> Array (String) -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setComponentGroupsToAdd($1)")
+	setComponentGroupsToAdd : DefinitionModifier -> (Array (String)) -> IO ()
 	export
-	%foreign (fn_call 2 "setComponentGroupsToRemove")
-	setComponentGroupsToRemove : DefinitionModifier -> Array (String) -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setComponentGroupsToRemove($1)")
+	setComponentGroupsToRemove : DefinitionModifier -> (Array (String)) -> IO ()
 	export
-	%foreign (fn_call 2 "setTriggers")
-	setTriggers : DefinitionModifier -> Array (Trigger) -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setTriggers($1)")
+	setTriggers : DefinitionModifier -> (Array (Trigger)) -> IO ()
 namespace Dimension
 	export
-	%foreign (fn_call 4 "createExplosion")
+	%foreign (ffi_tag "($0,$1,$2,$3) => $0 && $0.createExplosion($1,$2,$3)")
 	createExplosion : Dimension -> Vector3 -> Double -> ExplosionOptions -> IO ()
 	export
-	%foreign (fn_call 5 "fillBlocks")
-	fillBlocks : Dimension -> Vector3 -> Vector3 -> Union3 String BlockPermutation BlockType -> BlockFillOptions -> Double
+	%foreign (ffi_tag "($0,$1,$2,$3,$4) => $0 && $0.fillBlocks($1,$2,$3,$4)")
+	fillBlocks : Dimension -> Vector3 -> Vector3 -> String -> BlockFillOptions -> Double
 	export
-	%foreign (fn_call 2 "getBlock")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getBlock($1)")
 	getBlock : Dimension -> Vector3 -> Block
 	export
-	%foreign (fn_call 4 "getBlockFromRay")
+	%foreign (ffi_tag "($0,$1,$2,$3) => $0 && $0.getBlockFromRay($1,$2,$3)")
 	getBlockFromRay : Dimension -> Vector3 -> Vector3 -> BlockRaycastOptions -> BlockRaycastHit
 	export
-	%foreign (fn_call 2 "getEntities")
-	getEntities : Dimension -> EntityQueryOptions -> Array (Entity)
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getEntities($1)")
+	getEntities : Dimension -> EntityQueryOptions -> (Array (Entity))
 	export
-	%foreign (fn_call 2 "getEntitiesAtBlockLocation")
-	getEntitiesAtBlockLocation : Dimension -> Vector3 -> Array (Entity)
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getEntitiesAtBlockLocation($1)")
+	getEntitiesAtBlockLocation : Dimension -> Vector3 -> (Array (Entity))
 	export
-	%foreign (fn_call 4 "getEntitiesFromRay")
-	getEntitiesFromRay : Dimension -> Vector3 -> Vector3 -> EntityRaycastOptions -> Array (EntityRaycastHit)
+	%foreign (ffi_tag "($0,$1,$2,$3) => $0 && $0.getEntitiesFromRay($1,$2,$3)")
+	getEntitiesFromRay : Dimension -> Vector3 -> Vector3 -> EntityRaycastOptions -> (Array (EntityRaycastHit))
 	export
-	%foreign (fn_call 2 "getPlayers")
-	getPlayers : Dimension -> EntityQueryOptions -> Array (Player)
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getPlayers($1)")
+	getPlayers : Dimension -> EntityQueryOptions -> (Array (Player))
 	export
-	%foreign (fn_call 2 "runCommand")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.runCommand($1)")
 	runCommand : Dimension -> String -> CommandResult
 	export
-	%foreign (fn_call 2 "runCommandAsync")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.runCommandAsync($1)")
 	runCommandAsync : Dimension -> String -> Promise CommandResult
 	export
-	%foreign (fn_call 2 "setWeather")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setWeather($1)")
 	setWeather : Dimension -> WeatherType -> IO ()
 	export
-	%foreign (fn_call 3 "spawnEntity")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.spawnEntity($1,$2)")
 	spawnEntity : Dimension -> String -> Vector3 -> Entity
 	export
-	%foreign (fn_call 3 "spawnItem")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.spawnItem($1,$2)")
 	spawnItem : Dimension -> ItemStack -> Vector3 -> Entity
 	export
-	%foreign (fn_call 4 "spawnParticle")
+	%foreign (ffi_tag "($0,$1,$2,$3) => $0 && $0.spawnParticle($1,$2,$3)")
 	spawnParticle : Dimension -> String -> Vector3 -> MolangVariableMap -> IO ()
 	export
 	%foreign (get_var "id")
@@ -1403,27 +1083,27 @@ namespace DimensionType
 	typeId : DimensionType -> String
 namespace DimensionTypes
 	export
-	%foreign (fn_call 2 "get")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.get($1)")
 	get : DimensionTypes -> String -> DimensionType
 	export
-	%foreign (fn_call 1 "getAll")
-	getAll : DimensionTypes -> Array (DimensionType)
+	%foreign (ffi_tag "($0) => $0 && $0.getAll()")
+	getAll : DimensionTypes -> (Array (DimensionType))
 namespace DynamicPropertiesDefinition
 	export
-	%foreign (fn_call 3 "defineBoolean")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.defineBoolean($1,$2)")
 	defineBoolean : DynamicPropertiesDefinition -> String -> Boolean -> DynamicPropertiesDefinition
 	export
-	%foreign (fn_call 3 "defineNumber")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.defineNumber($1,$2)")
 	defineNumber : DynamicPropertiesDefinition -> String -> Double -> DynamicPropertiesDefinition
 	export
-	%foreign (fn_call 4 "defineString")
+	%foreign (ffi_tag "($0,$1,$2,$3) => $0 && $0.defineString($1,$2,$3)")
 	defineString : DynamicPropertiesDefinition -> String -> Double -> String -> DynamicPropertiesDefinition
 	export
-	%foreign (fn_call 3 "defineVector")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.defineVector($1,$2)")
 	defineVector : DynamicPropertiesDefinition -> String -> Vector3 -> DynamicPropertiesDefinition
 namespace Effect
 	export
-	%foreign (fn_call 1 "isValid")
+	%foreign (ffi_tag "($0) => $0 && $0.isValid()")
 	isValid : Effect -> Boolean
 	export
 	%foreign (get_var "amplifier")
@@ -1442,149 +1122,149 @@ namespace EffectAddAfterEvent
 	%foreign (get_var "effect")
 	effect : EffectAddAfterEvent -> Effect
 	export
-	%foreign (update_var "set_effect")
+	%foreign (update_var "effect")
 	set_effect : EffectAddAfterEvent -> Effect -> IO ()
 	export
 	%foreign (get_var "effectState")
 	effectState : EffectAddAfterEvent -> Double
 	export
-	%foreign (update_var "set_effectState")
+	%foreign (update_var "effectState")
 	set_effectState : EffectAddAfterEvent -> Double -> IO ()
 	export
 	%foreign (get_var "entity")
 	entity : EffectAddAfterEvent -> Entity
 	export
-	%foreign (update_var "set_entity")
+	%foreign (update_var "entity")
 	set_entity : EffectAddAfterEvent -> Entity -> IO ()
 	export
 	%foreign id_as
 	asEntityRaycastHit : EffectAddAfterEvent -> EntityRaycastHit
 namespace EffectAddAfterEventSignal
 	export
-	%foreign (fn_call 3 "subscribe")
-	subscribe : EffectAddAfterEventSignal -> (EffectAddAfterEvent -> IO ()) -> EntityEventOptions -> (EffectAddAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.subscribe($1,$2)")
+	subscribe : EffectAddAfterEventSignal -> (EffectAddAfterEvent -> IO ()) -> EntityEventOptions -> IO (EffectAddAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : EffectAddAfterEventSignal -> (EffectAddAfterEvent -> IO ()) -> IO ()
 namespace EffectType
 	export
-	%foreign (fn_call 1 "getName")
+	%foreign (ffi_tag "($0) => $0 && $0.getName()")
 	getName : EffectType -> String
 namespace EffectTypes
 	export
-	%foreign (fn_call 2 "get")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.get($1)")
 	get : EffectTypes -> String -> EffectType
 	export
-	%foreign (fn_call 1 "getAll")
-	getAll : EffectTypes -> Array (EffectType)
+	%foreign (ffi_tag "($0) => $0 && $0.getAll()")
+	getAll : EffectTypes -> (Array (EffectType))
 namespace Enchantment
 	export
-	%foreign (cons_new "Enchantment")
-	MkEnchantment : Union2 String EnchantmentType -> Double -> Enchantment
+	%foreign (ffi_tag "($0,$1) => new Enchantment($0,$1)")
+	MkEnchantment : String -> Double -> Enchantment
 	export
 	%foreign (get_var "level")
 	level : Enchantment -> Double
 	export
-	%foreign (update_var "set_level")
+	%foreign (update_var "level")
 	set_level : Enchantment -> Double -> IO ()
 	export
 	%foreign (get_var "type")
 	type : Enchantment -> EnchantmentType
 namespace EnchantmentList
 	export
-	%foreign (cons_new "EnchantmentList")
+	%foreign (ffi_tag "($0) => new EnchantmentList($0)")
 	MkEnchantmentList : Double -> EnchantmentList
 	export
-	%foreign (fn_call 2 "addEnchantment")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.addEnchantment($1)")
 	addEnchantment : EnchantmentList -> Enchantment -> Boolean
 	export
-	%foreign (fn_call 2 "canAddEnchantment")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.canAddEnchantment($1)")
 	canAddEnchantment : EnchantmentList -> Enchantment -> Boolean
 	export
-	%foreign (fn_call 2 "getEnchantment")
-	getEnchantment : EnchantmentList -> Union2 String EnchantmentType -> Enchantment
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getEnchantment($1)")
+	getEnchantment : EnchantmentList -> String -> Enchantment
 	export
-	%foreign (fn_call 2 "hasEnchantment")
-	hasEnchantment : EnchantmentList -> Union2 String EnchantmentType -> Double
+	%foreign (ffi_tag "($0,$1) => $0 && $0.hasEnchantment($1)")
+	hasEnchantment : EnchantmentList -> String -> Double
 	export
-	%foreign (fn_call 2 "removeEnchantment")
-	removeEnchantment : EnchantmentList -> Union2 String EnchantmentType -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.removeEnchantment($1)")
+	removeEnchantment : EnchantmentList -> String -> IO ()
 	export
 	%foreign (get_var "slot")
 	slot : EnchantmentList -> Double
 namespace EnchantmentSlot
 	export
 	%foreign (get_var "all")
-	all : Number
+	all : Double
 	export
 	%foreign (get_var "armorFeet")
-	armorFeet : Number
+	armorFeet : Double
 	export
 	%foreign (get_var "armorHead")
-	armorHead : Number
+	armorHead : Double
 	export
 	%foreign (get_var "armorLegs")
-	armorLegs : Number
+	armorLegs : Double
 	export
 	%foreign (get_var "armorTorso")
-	armorTorso : Number
+	armorTorso : Double
 	export
 	%foreign (get_var "axe")
-	axe : Number
+	axe : Double
 	export
 	%foreign (get_var "bow")
-	bow : Number
+	bow : Double
 	export
 	%foreign (get_var "carrotStick")
-	carrotStick : Number
+	carrotStick : Double
 	export
 	%foreign (get_var "cosmeticHead")
-	cosmeticHead : Number
+	cosmeticHead : Double
 	export
 	%foreign (get_var "crossbow")
-	crossbow : Number
+	crossbow : Double
 	export
 	%foreign (get_var "elytra")
-	elytra : Number
+	elytra : Double
 	export
 	%foreign (get_var "fishingRod")
-	fishingRod : Number
+	fishingRod : Double
 	export
 	%foreign (get_var "flintsteel")
-	flintsteel : Number
+	flintsteel : Double
 	export
 	%foreign (get_var "gArmor")
-	gArmor : Number
+	gArmor : Double
 	export
 	%foreign (get_var "gDigging")
-	gDigging : Number
+	gDigging : Double
 	export
 	%foreign (get_var "gTool")
-	gTool : Number
+	gTool : Double
 	export
 	%foreign (get_var "hoe")
-	hoe : Number
+	hoe : Double
 	export
 	%foreign (get_var "none")
-	none : Number
+	none : Double
 	export
 	%foreign (get_var "pickaxe")
-	pickaxe : Number
+	pickaxe : Double
 	export
 	%foreign (get_var "shears")
-	shears : Number
+	shears : Double
 	export
 	%foreign (get_var "shield")
-	shield : Number
+	shield : Double
 	export
 	%foreign (get_var "shovel")
-	shovel : Number
+	shovel : Double
 	export
 	%foreign (get_var "spear")
-	spear : Number
+	spear : Double
 	export
 	%foreign (get_var "sword")
-	sword : Number
+	sword : Double
 namespace EnchantmentType
 	export
 	%foreign (get_var "id")
@@ -1594,113 +1274,113 @@ namespace EnchantmentType
 	maxLevel : EnchantmentType -> Double
 namespace EnchantmentTypes
 	export
-	%foreign (fn_call 2 "get")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.get($1)")
 	get : EnchantmentTypes -> String -> EnchantmentType
 namespace Entity
 	export
-	%foreign (fn_call 4 "addEffect")
-	addEffect : Entity -> Union2 String EffectType -> Double -> EntityEffectOptions -> IO ()
+	%foreign (ffi_tag "($0,$1,$2,$3) => $0 && $0.addEffect($1,$2,$3)")
+	addEffect : Entity -> String -> Double -> EntityEffectOptions -> IO ()
 	export
-	%foreign (fn_call 2 "addTag")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.addTag($1)")
 	addTag : Entity -> String -> Boolean
 	export
-	%foreign (fn_call 3 "applyDamage")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.applyDamage($1,$2)")
 	applyDamage : Entity -> Double -> Union2 EntityApplyDamageByProjectileOptions EntityApplyDamageOptions -> Boolean
 	export
-	%foreign (fn_call 2 "applyImpulse")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.applyImpulse($1)")
 	applyImpulse : Entity -> Vector3 -> IO ()
 	export
-	%foreign (fn_call 5 "applyKnockback")
+	%foreign (ffi_tag "($0,$1,$2,$3,$4) => $0 && $0.applyKnockback($1,$2,$3,$4)")
 	applyKnockback : Entity -> Double -> Double -> Double -> Double -> IO ()
 	export
-	%foreign (fn_call 1 "clearVelocity")
+	%foreign (ffi_tag "($0) => $0 && $0.clearVelocity()")
 	clearVelocity : Entity -> IO ()
 	export
-	%foreign (fn_call 2 "extinguishFire")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.extinguishFire($1)")
 	extinguishFire : Entity -> Boolean -> Boolean
 	export
-	%foreign (fn_call 2 "getBlockFromViewDirection")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getBlockFromViewDirection($1)")
 	getBlockFromViewDirection : Entity -> BlockRaycastOptions -> BlockRaycastHit
 	export
-	%foreign (fn_call 2 "getComponent")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getComponent($1)")
 	getComponent : Entity -> String -> EntityComponent
 	export
-	%foreign (fn_call 1 "getComponents")
-	getComponents : Entity -> Array (EntityComponent)
+	%foreign (ffi_tag "($0) => $0 && $0.getComponents()")
+	getComponents : Entity -> (Array (EntityComponent))
 	export
-	%foreign (fn_call 2 "getDynamicProperty")
-	getDynamicProperty : Entity -> String -> Union4 String Double Boolean Vector3
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getDynamicProperty($1)")
+	getDynamicProperty : Entity -> String -> String
 	export
-	%foreign (fn_call 2 "getEffect")
-	getEffect : Entity -> Union2 String EffectType -> Effect
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getEffect($1)")
+	getEffect : Entity -> String -> Effect
 	export
-	%foreign (fn_call 1 "getEffects")
-	getEffects : Entity -> Array (Effect)
+	%foreign (ffi_tag "($0) => $0 && $0.getEffects()")
+	getEffects : Entity -> (Array (Effect))
 	export
-	%foreign (fn_call 2 "getEntitiesFromViewDirection")
-	getEntitiesFromViewDirection : Entity -> EntityRaycastOptions -> Array (EntityRaycastHit)
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getEntitiesFromViewDirection($1)")
+	getEntitiesFromViewDirection : Entity -> EntityRaycastOptions -> (Array (EntityRaycastHit))
 	export
-	%foreign (fn_call 1 "getHeadLocation")
+	%foreign (ffi_tag "($0) => $0 && $0.getHeadLocation()")
 	getHeadLocation : Entity -> Vector3
 	export
-	%foreign (fn_call 1 "getRotation")
+	%foreign (ffi_tag "($0) => $0 && $0.getRotation()")
 	getRotation : Entity -> Vector2
 	export
-	%foreign (fn_call 1 "getTags")
-	getTags : Entity -> Array (String)
+	%foreign (ffi_tag "($0) => $0 && $0.getTags()")
+	getTags : Entity -> (Array (String))
 	export
-	%foreign (fn_call 1 "getVelocity")
+	%foreign (ffi_tag "($0) => $0 && $0.getVelocity()")
 	getVelocity : Entity -> Vector3
 	export
-	%foreign (fn_call 1 "getViewDirection")
+	%foreign (ffi_tag "($0) => $0 && $0.getViewDirection()")
 	getViewDirection : Entity -> Vector3
 	export
-	%foreign (fn_call 2 "hasComponent")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.hasComponent($1)")
 	hasComponent : Entity -> String -> Boolean
 	export
-	%foreign (fn_call 2 "hasTag")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.hasTag($1)")
 	hasTag : Entity -> String -> Boolean
 	export
-	%foreign (fn_call 1 "isValid")
+	%foreign (ffi_tag "($0) => $0 && $0.isValid()")
 	isValid : Entity -> Boolean
 	export
-	%foreign (fn_call 1 "kill")
+	%foreign (ffi_tag "($0) => $0 && $0.kill()")
 	kill : Entity -> Boolean
 	export
-	%foreign (fn_call 3 "playAnimation")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.playAnimation($1,$2)")
 	playAnimation : Entity -> String -> PlayAnimationOptions -> IO ()
 	export
-	%foreign (fn_call 2 "removeDynamicProperty")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.removeDynamicProperty($1)")
 	removeDynamicProperty : Entity -> String -> Boolean
 	export
-	%foreign (fn_call 2 "removeEffect")
-	removeEffect : Entity -> Union2 String EffectType -> Boolean
+	%foreign (ffi_tag "($0,$1) => $0 && $0.removeEffect($1)")
+	removeEffect : Entity -> String -> Boolean
 	export
-	%foreign (fn_call 2 "removeTag")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.removeTag($1)")
 	removeTag : Entity -> String -> Boolean
 	export
-	%foreign (fn_call 2 "runCommand")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.runCommand($1)")
 	runCommand : Entity -> String -> CommandResult
 	export
-	%foreign (fn_call 2 "runCommandAsync")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.runCommandAsync($1)")
 	runCommandAsync : Entity -> String -> Promise CommandResult
 	export
-	%foreign (fn_call 3 "setDynamicProperty")
-	setDynamicProperty : Entity -> String -> Union4 String Double Boolean Vector3 -> IO ()
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.setDynamicProperty($1,$2)")
+	setDynamicProperty : Entity -> String -> String -> IO ()
 	export
-	%foreign (fn_call 3 "setOnFire")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.setOnFire($1,$2)")
 	setOnFire : Entity -> Double -> Boolean -> Boolean
 	export
-	%foreign (fn_call 2 "setRotation")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setRotation($1)")
 	setRotation : Entity -> Vector2 -> IO ()
 	export
-	%foreign (fn_call 3 "teleport")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.teleport($1,$2)")
 	teleport : Entity -> Vector3 -> TeleportOptions -> IO ()
 	export
-	%foreign (fn_call 2 "triggerEvent")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.triggerEvent($1)")
 	triggerEvent : Entity -> String -> IO ()
 	export
-	%foreign (fn_call 3 "tryTeleport")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.tryTeleport($1,$2)")
 	tryTeleport : Entity -> Vector3 -> TeleportOptions -> Boolean
 	export
 	%foreign (get_var "dimension")
@@ -1727,7 +1407,7 @@ namespace Entity
 	%foreign (get_var "isSneaking")
 	isSneaking : Entity -> Boolean
 	export
-	%foreign (update_var "set_isSneaking")
+	%foreign (update_var "isSneaking")
 	set_isSneaking : Entity -> Boolean -> IO ()
 	export
 	%foreign (get_var "isSprinting")
@@ -1745,7 +1425,7 @@ namespace Entity
 	%foreign (get_var "nameTag")
 	nameTag : Entity -> String
 	export
-	%foreign (update_var "set_nameTag")
+	%foreign (update_var "nameTag")
 	set_nameTag : Entity -> String -> IO ()
 	export
 	%foreign (get_var "scoreboardIdentity")
@@ -1774,11 +1454,11 @@ namespace EntityAddRiderComponent
 	asEntityComponent : EntityAddRiderComponent -> EntityComponent
 namespace EntityAgeableComponent
 	export
-	%foreign (fn_call 1 "getDropItems")
-	getDropItems : EntityAgeableComponent -> Array (String)
+	%foreign (ffi_tag "($0) => $0 && $0.getDropItems()")
+	getDropItems : EntityAgeableComponent -> (Array (String))
 	export
-	%foreign (fn_call 1 "getFeedItems")
-	getFeedItems : EntityAgeableComponent -> Array (EntityDefinitionFeedItem)
+	%foreign (ffi_tag "($0) => $0 && $0.getFeedItems()")
+	getFeedItems : EntityAgeableComponent -> (Array (EntityDefinitionFeedItem))
 	export
 	%foreign (get_var "duration")
 	duration : EntityAgeableComponent -> Double
@@ -1793,16 +1473,16 @@ namespace EntityAgeableComponent
 	asEntityComponent : EntityAgeableComponent -> EntityComponent
 namespace EntityAttributeComponent
 	export
-	%foreign (fn_call 1 "resetToDefaultValue")
+	%foreign (ffi_tag "($0) => $0 && $0.resetToDefaultValue()")
 	resetToDefaultValue : EntityAttributeComponent -> IO ()
 	export
-	%foreign (fn_call 1 "resetToMaxValue")
+	%foreign (ffi_tag "($0) => $0 && $0.resetToMaxValue()")
 	resetToMaxValue : EntityAttributeComponent -> IO ()
 	export
-	%foreign (fn_call 1 "resetToMinValue")
+	%foreign (ffi_tag "($0) => $0 && $0.resetToMinValue()")
 	resetToMinValue : EntityAttributeComponent -> IO ()
 	export
-	%foreign (fn_call 2 "setCurrentValue")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setCurrentValue($1)")
 	setCurrentValue : EntityAttributeComponent -> Double -> Boolean
 	export
 	%foreign (get_var "currentValue")
@@ -1828,13 +1508,13 @@ namespace EntityBaseMovementComponent
 	asEntityComponent : EntityBaseMovementComponent -> EntityComponent
 namespace EntityBreathableComponent
 	export
-	%foreign (fn_call 1 "getBreatheBlocks")
-	getBreatheBlocks : EntityBreathableComponent -> Array (BlockPermutation)
+	%foreign (ffi_tag "($0) => $0 && $0.getBreatheBlocks()")
+	getBreatheBlocks : EntityBreathableComponent -> (Array (BlockPermutation))
 	export
-	%foreign (fn_call 1 "getNonBreatheBlocks")
-	getNonBreatheBlocks : EntityBreathableComponent -> Array (BlockPermutation)
+	%foreign (ffi_tag "($0) => $0 && $0.getNonBreatheBlocks()")
+	getNonBreatheBlocks : EntityBreathableComponent -> (Array (BlockPermutation))
 	export
-	%foreign (fn_call 2 "setAirSupply")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setAirSupply($1)")
 	setAirSupply : EntityBreathableComponent -> Double -> IO ()
 	export
 	%foreign (get_var "breathesAir")
@@ -1892,7 +1572,7 @@ namespace EntityColorComponent
 	%foreign (get_var "value")
 	value : EntityColorComponent -> Double
 	export
-	%foreign (update_var "set_value")
+	%foreign (update_var "value")
 	set_value : EntityColorComponent -> Double -> IO ()
 	export
 	%foreign (get_var "componentId")
@@ -1926,20 +1606,20 @@ namespace EntityDieAfterEvent
 	deadEntity : EntityDieAfterEvent -> Entity
 namespace EntityDieAfterEventSignal
 	export
-	%foreign (fn_call 3 "subscribe")
-	subscribe : EntityDieAfterEventSignal -> (EntityDieAfterEvent -> IO ()) -> EntityEventOptions -> (EntityDieAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.subscribe($1,$2)")
+	subscribe : EntityDieAfterEventSignal -> (EntityDieAfterEvent -> IO ()) -> EntityEventOptions -> IO (EntityDieAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : EntityDieAfterEventSignal -> (EntityDieAfterEvent -> IO ()) -> IO ()
 namespace EntityEquipmentInventoryComponent
 	export
-	%foreign (fn_call 2 "getEquipment")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getEquipment($1)")
 	getEquipment : EntityEquipmentInventoryComponent -> EquipmentSlot -> ItemStack
 	export
-	%foreign (fn_call 2 "getEquipmentSlot")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getEquipmentSlot($1)")
 	getEquipmentSlot : EntityEquipmentInventoryComponent -> EquipmentSlot -> ContainerSlot
 	export
-	%foreign (fn_call 3 "setEquipment")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.setEquipment($1,$2)")
 	setEquipment : EntityEquipmentInventoryComponent -> EquipmentSlot -> ItemStack -> Boolean
 	export
 	%foreign (get_var "componentId")
@@ -1966,7 +1646,7 @@ namespace EntityFlyingSpeedComponent
 	%foreign (get_var "value")
 	value : EntityFlyingSpeedComponent -> Double
 	export
-	%foreign (update_var "set_value")
+	%foreign (update_var "value")
 	set_value : EntityFlyingSpeedComponent -> Double -> IO ()
 	export
 	%foreign (get_var "componentId")
@@ -1979,7 +1659,7 @@ namespace EntityFrictionModifierComponent
 	%foreign (get_var "value")
 	value : EntityFrictionModifierComponent -> Double
 	export
-	%foreign (update_var "set_value")
+	%foreign (update_var "value")
 	set_value : EntityFrictionModifierComponent -> Double -> IO ()
 	export
 	%foreign (get_var "componentId")
@@ -1992,7 +1672,7 @@ namespace EntityGroundOffsetComponent
 	%foreign (get_var "value")
 	value : EntityGroundOffsetComponent -> Double
 	export
-	%foreign (update_var "set_value")
+	%foreign (update_var "value")
 	set_value : EntityGroundOffsetComponent -> Double -> IO ()
 	export
 	%foreign (get_var "componentId")
@@ -2002,8 +1682,8 @@ namespace EntityGroundOffsetComponent
 	asEntityComponent : EntityGroundOffsetComponent -> EntityComponent
 namespace EntityHealableComponent
 	export
-	%foreign (fn_call 1 "getFeedItems")
-	getFeedItems : EntityHealableComponent -> Array (FeedItem)
+	%foreign (ffi_tag "($0) => $0 && $0.getFeedItems()")
+	getFeedItems : EntityHealableComponent -> (Array (FeedItem))
 	export
 	%foreign (get_var "filters")
 	filters : EntityHealableComponent -> FilterGroup
@@ -2031,10 +1711,10 @@ namespace EntityHealthChangedAfterEvent
 	asEntityRaycastHit : EntityHealthChangedAfterEvent -> EntityRaycastHit
 namespace EntityHealthChangedAfterEventSignal
 	export
-	%foreign (fn_call 3 "subscribe")
-	subscribe : EntityHealthChangedAfterEventSignal -> (EntityHealthChangedAfterEvent -> IO ()) -> EntityEventOptions -> (EntityHealthChangedAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.subscribe($1,$2)")
+	subscribe : EntityHealthChangedAfterEventSignal -> (EntityHealthChangedAfterEvent -> IO ()) -> EntityEventOptions -> IO (EntityHealthChangedAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : EntityHealthChangedAfterEventSignal -> (EntityHealthChangedAfterEvent -> IO ()) -> IO ()
 namespace EntityHealthComponent
 	export
@@ -2055,10 +1735,10 @@ namespace EntityHitBlockAfterEvent
 	hitBlock : EntityHitBlockAfterEvent -> Block
 namespace EntityHitBlockAfterEventSignal
 	export
-	%foreign (fn_call 3 "subscribe")
-	subscribe : EntityHitBlockAfterEventSignal -> (EntityHitBlockAfterEvent -> IO ()) -> EntityEventOptions -> (EntityHitBlockAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.subscribe($1,$2)")
+	subscribe : EntityHitBlockAfterEventSignal -> (EntityHitBlockAfterEvent -> IO ()) -> EntityEventOptions -> IO (EntityHitBlockAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : EntityHitBlockAfterEventSignal -> (EntityHitBlockAfterEvent -> IO ()) -> IO ()
 namespace EntityHitEntityAfterEvent
 	export
@@ -2069,10 +1749,10 @@ namespace EntityHitEntityAfterEvent
 	hitEntity : EntityHitEntityAfterEvent -> Entity
 namespace EntityHitEntityAfterEventSignal
 	export
-	%foreign (fn_call 3 "subscribe")
-	subscribe : EntityHitEntityAfterEventSignal -> (EntityHitEntityAfterEvent -> IO ()) -> EntityEventOptions -> (EntityHitEntityAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.subscribe($1,$2)")
+	subscribe : EntityHitEntityAfterEventSignal -> (EntityHitEntityAfterEvent -> IO ()) -> EntityEventOptions -> IO (EntityHitEntityAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : EntityHitEntityAfterEventSignal -> (EntityHitEntityAfterEvent -> IO ()) -> IO ()
 namespace EntityHurtAfterEvent
 	export
@@ -2086,10 +1766,10 @@ namespace EntityHurtAfterEvent
 	hurtEntity : EntityHurtAfterEvent -> Entity
 namespace EntityHurtAfterEventSignal
 	export
-	%foreign (fn_call 3 "subscribe")
-	subscribe : EntityHurtAfterEventSignal -> (EntityHurtAfterEvent -> IO ()) -> EntityEventOptions -> (EntityHurtAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.subscribe($1,$2)")
+	subscribe : EntityHurtAfterEventSignal -> (EntityHurtAfterEvent -> IO ()) -> EntityEventOptions -> IO (EntityHurtAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : EntityHurtAfterEventSignal -> (EntityHurtAfterEvent -> IO ()) -> IO ()
 namespace EntityInventoryComponent
 	export
@@ -2229,10 +1909,10 @@ namespace EntityLavaMovementComponent
 	asEntityAttributeComponent : EntityLavaMovementComponent -> EntityAttributeComponent
 namespace EntityLeashableComponent
 	export
-	%foreign (fn_call 2 "leash")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.leash($1)")
 	leash : EntityLeashableComponent -> Entity -> IO ()
 	export
-	%foreign (fn_call 1 "unleash")
+	%foreign (ffi_tag "($0) => $0 && $0.unleash()")
 	unleash : EntityLeashableComponent -> IO ()
 	export
 	%foreign (get_var "softDistance")
@@ -2248,7 +1928,7 @@ namespace EntityMarkVariantComponent
 	%foreign (get_var "value")
 	value : EntityMarkVariantComponent -> Double
 	export
-	%foreign (update_var "set_value")
+	%foreign (update_var "value")
 	set_value : EntityMarkVariantComponent -> Double -> IO ()
 	export
 	%foreign (get_var "componentId")
@@ -2258,7 +1938,7 @@ namespace EntityMarkVariantComponent
 	asEntityComponent : EntityMarkVariantComponent -> EntityComponent
 namespace EntityMountTamingComponent
 	export
-	%foreign (fn_call 2 "setTamed")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setTamed($1)")
 	setTamed : EntityMountTamingComponent -> Boolean -> IO ()
 	export
 	%foreign (get_var "componentId")
@@ -2466,7 +2146,7 @@ namespace EntityPushThroughComponent
 	%foreign (get_var "value")
 	value : EntityPushThroughComponent -> Double
 	export
-	%foreign (update_var "set_value")
+	%foreign (update_var "value")
 	set_value : EntityPushThroughComponent -> Double -> IO ()
 	export
 	%foreign (get_var "componentId")
@@ -2480,30 +2160,30 @@ namespace EntityRemovedAfterEvent
 	removedEntity : EntityRemovedAfterEvent -> String
 namespace EntityRemovedAfterEventSignal
 	export
-	%foreign (fn_call 3 "subscribe")
-	subscribe : EntityRemovedAfterEventSignal -> (EntityRemovedAfterEvent -> IO ()) -> EntityEventOptions -> (EntityRemovedAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.subscribe($1,$2)")
+	subscribe : EntityRemovedAfterEventSignal -> (EntityRemovedAfterEvent -> IO ()) -> EntityEventOptions -> IO (EntityRemovedAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : EntityRemovedAfterEventSignal -> (EntityRemovedAfterEvent -> IO ()) -> IO ()
 namespace EntityRideableComponent
 	export
-	%foreign (fn_call 2 "addRider")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.addRider($1)")
 	addRider : EntityRideableComponent -> Entity -> Boolean
 	export
-	%foreign (fn_call 2 "ejectRider")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.ejectRider($1)")
 	ejectRider : EntityRideableComponent -> Entity -> IO ()
 	export
-	%foreign (fn_call 1 "ejectRiders")
+	%foreign (ffi_tag "($0) => $0 && $0.ejectRiders()")
 	ejectRiders : EntityRideableComponent -> IO ()
 	export
-	%foreign (fn_call 1 "getFamilyTypes")
-	getFamilyTypes : EntityRideableComponent -> Array (String)
+	%foreign (ffi_tag "($0) => $0 && $0.getFamilyTypes()")
+	getFamilyTypes : EntityRideableComponent -> (Array (String))
 	export
-	%foreign (fn_call 1 "getRiders")
-	getRiders : EntityRideableComponent -> Array (Entity)
+	%foreign (ffi_tag "($0) => $0 && $0.getRiders()")
+	getRiders : EntityRideableComponent -> (Array (Entity))
 	export
-	%foreign (fn_call 1 "getSeats")
-	getSeats : EntityRideableComponent -> Array (Seat)
+	%foreign (ffi_tag "($0) => $0 && $0.getSeats()")
+	getSeats : EntityRideableComponent -> (Array (Seat))
 	export
 	%foreign (get_var "controllingSeat")
 	controllingSeat : EntityRideableComponent -> Double
@@ -2543,7 +2223,7 @@ namespace EntityScaleComponent
 	%foreign (get_var "value")
 	value : EntityScaleComponent -> Double
 	export
-	%foreign (update_var "set_value")
+	%foreign (update_var "value")
 	set_value : EntityScaleComponent -> Double -> IO ()
 	export
 	%foreign (get_var "componentId")
@@ -2556,7 +2236,7 @@ namespace EntitySkinIdComponent
 	%foreign (get_var "value")
 	value : EntitySkinIdComponent -> Double
 	export
-	%foreign (update_var "set_value")
+	%foreign (update_var "value")
 	set_value : EntitySkinIdComponent -> Double -> IO ()
 	export
 	%foreign (get_var "componentId")
@@ -2569,17 +2249,17 @@ namespace EntitySpawnAfterEvent
 	%foreign (get_var "entity")
 	entity : EntitySpawnAfterEvent -> Entity
 	export
-	%foreign (update_var "set_entity")
+	%foreign (update_var "entity")
 	set_entity : EntitySpawnAfterEvent -> Entity -> IO ()
 	export
 	%foreign id_as
 	asEntityRaycastHit : EntitySpawnAfterEvent -> EntityRaycastHit
 namespace EntitySpawnAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : EntitySpawnAfterEventSignal -> (EntitySpawnAfterEvent -> IO ()) -> (EntitySpawnAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : EntitySpawnAfterEventSignal -> (EntitySpawnAfterEvent -> IO ()) -> IO (EntitySpawnAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : EntitySpawnAfterEventSignal -> (EntitySpawnAfterEvent -> IO ()) -> IO ()
 namespace EntityStrengthComponent
 	export
@@ -2599,10 +2279,10 @@ namespace EntityStrengthComponent
 	asNumberRange : EntityStrengthComponent -> NumberRange
 namespace EntityTameableComponent
 	export
-	%foreign (fn_call 1 "getTameItems")
-	getTameItems : EntityTameableComponent -> Array (String)
+	%foreign (ffi_tag "($0) => $0 && $0.getTameItems()")
+	getTameItems : EntityTameableComponent -> (Array (String))
 	export
-	%foreign (fn_call 1 "tame")
+	%foreign (ffi_tag "($0) => $0 && $0.tame()")
 	tame : EntityTameableComponent -> Boolean
 	export
 	%foreign (get_var "probability")
@@ -2619,11 +2299,8 @@ namespace EntityType
 	id : EntityType -> String
 namespace EntityTypes
 	export
-	%foreign (fn_call 2 "get")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.get($1)")
 	get : EntityTypes -> String -> EntityType
-	export
-	%foreign (fn_call 1 "getAll")
-	getAll : EntityTypes -> EntityTypeIterator
 namespace EntityUnderwaterMovementComponent
 	export
 	%foreign (get_var "componentId")
@@ -2650,8 +2327,8 @@ namespace EntityWantsJockeyComponent
 	asEntityComponent : EntityWantsJockeyComponent -> EntityComponent
 namespace ExplosionAfterEvent
 	export
-	%foreign (fn_call 1 "getImpactedBlocks")
-	getImpactedBlocks : ExplosionAfterEvent -> Array (Vector3)
+	%foreign (ffi_tag "($0) => $0 && $0.getImpactedBlocks()")
+	getImpactedBlocks : ExplosionAfterEvent -> (Array (Vector3))
 	export
 	%foreign (get_var "dimension")
 	dimension : ExplosionAfterEvent -> Dimension
@@ -2663,35 +2340,35 @@ namespace ExplosionAfterEvent
 	asDimensionLocation : ExplosionAfterEvent -> DimensionLocation
 namespace ExplosionAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ExplosionAfterEventSignal -> (ExplosionAfterEvent -> IO ()) -> (ExplosionAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ExplosionAfterEventSignal -> (ExplosionAfterEvent -> IO ()) -> IO (ExplosionAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ExplosionAfterEventSignal -> (ExplosionAfterEvent -> IO ()) -> IO ()
 namespace ExplosionBeforeEvent
 	export
-	%foreign (fn_call 2 "setImpactedBlocks")
-	setImpactedBlocks : ExplosionBeforeEvent -> Array (Vector3) -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setImpactedBlocks($1)")
+	setImpactedBlocks : ExplosionBeforeEvent -> (Array (Vector3)) -> IO ()
 	export
 	%foreign (get_var "cancel")
 	cancel : ExplosionBeforeEvent -> Boolean
 	export
-	%foreign (update_var "set_cancel")
+	%foreign (update_var "cancel")
 	set_cancel : ExplosionBeforeEvent -> Boolean -> IO ()
 	export
 	%foreign id_as
 	asExplosionAfterEvent : ExplosionBeforeEvent -> ExplosionAfterEvent
 namespace ExplosionBeforeEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ExplosionBeforeEventSignal -> (ExplosionBeforeEvent -> IO ()) -> (ExplosionBeforeEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ExplosionBeforeEventSignal -> (ExplosionBeforeEvent -> IO ()) -> IO (ExplosionBeforeEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ExplosionBeforeEventSignal -> (ExplosionBeforeEvent -> IO ()) -> IO ()
 namespace FeedItem
 	export
-	%foreign (fn_call 1 "getEffects")
-	getEffects : FeedItem -> Array (FeedItemEffect)
+	%foreign (ffi_tag "($0) => $0 && $0.getEffects()")
+	getEffects : FeedItem -> (Array (FeedItemEffect))
 	export
 	%foreign (get_var "healAmount")
 	healAmount : FeedItem -> Double
@@ -2715,44 +2392,44 @@ namespace FilterGroup
 namespace FluidContainer
 	export
 	%foreign (get_var "maxFillLevel")
-	maxFillLevel : Number
+	maxFillLevel : Double
 	export
 	%foreign (get_var "minFillLevel")
-	minFillLevel : Number
+	minFillLevel : Double
 namespace IButtonPushAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : IButtonPushAfterEventSignal -> (ButtonPushAfterEvent -> IO ()) -> (ButtonPushAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : IButtonPushAfterEventSignal -> (ButtonPushAfterEvent -> IO ()) -> IO (ButtonPushAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : IButtonPushAfterEventSignal -> (ButtonPushAfterEvent -> IO ()) -> IO ()
 namespace ILeverActionAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ILeverActionAfterEventSignal -> (LeverActionAfterEvent -> IO ()) -> (LeverActionAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ILeverActionAfterEventSignal -> (LeverActionAfterEvent -> IO ()) -> IO (LeverActionAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ILeverActionAfterEventSignal -> (LeverActionAfterEvent -> IO ()) -> IO ()
 namespace IPlayerJoinAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : IPlayerJoinAfterEventSignal -> (PlayerJoinAfterEvent -> IO ()) -> (PlayerJoinAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : IPlayerJoinAfterEventSignal -> (PlayerJoinAfterEvent -> IO ()) -> IO (PlayerJoinAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : IPlayerJoinAfterEventSignal -> (PlayerJoinAfterEvent -> IO ()) -> IO ()
 namespace IPlayerLeaveAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : IPlayerLeaveAfterEventSignal -> (PlayerLeaveAfterEvent -> IO ()) -> (PlayerLeaveAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : IPlayerLeaveAfterEventSignal -> (PlayerLeaveAfterEvent -> IO ()) -> IO (PlayerLeaveAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : IPlayerLeaveAfterEventSignal -> (PlayerLeaveAfterEvent -> IO ()) -> IO ()
 namespace IPlayerSpawnAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : IPlayerSpawnAfterEventSignal -> (PlayerSpawnAfterEvent -> IO ()) -> (PlayerSpawnAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : IPlayerSpawnAfterEventSignal -> (PlayerSpawnAfterEvent -> IO ()) -> IO (PlayerSpawnAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : IPlayerSpawnAfterEventSignal -> (PlayerSpawnAfterEvent -> IO ()) -> IO ()
 namespace ItemCompleteUseAfterEvent
 	export
@@ -2766,10 +2443,10 @@ namespace ItemCompleteUseAfterEvent
 	useDuration : ItemCompleteUseAfterEvent -> Double
 namespace ItemCompleteUseAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ItemCompleteUseAfterEventSignal -> (ItemCompleteUseAfterEvent -> IO ()) -> (ItemCompleteUseAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ItemCompleteUseAfterEventSignal -> (ItemCompleteUseAfterEvent -> IO ()) -> IO (ItemCompleteUseAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ItemCompleteUseAfterEventSignal -> (ItemCompleteUseAfterEvent -> IO ()) -> IO ()
 namespace ItemComponent
 	export
@@ -2777,7 +2454,7 @@ namespace ItemComponent
 	asComponent : ItemComponent -> Component
 namespace ItemCooldownComponent
 	export
-	%foreign (fn_call 2 "startCooldown")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.startCooldown($1)")
 	startCooldown : ItemCooldownComponent -> Player -> IO ()
 	export
 	%foreign (get_var "cooldownCategory")
@@ -2793,17 +2470,17 @@ namespace ItemCooldownComponent
 	asItemComponent : ItemCooldownComponent -> ItemComponent
 namespace ItemDefinitionAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ItemDefinitionAfterEventSignal -> (ItemDefinitionTriggeredAfterEvent -> IO ()) -> (ItemDefinitionTriggeredAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ItemDefinitionAfterEventSignal -> (ItemDefinitionTriggeredAfterEvent -> IO ()) -> IO (ItemDefinitionTriggeredAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ItemDefinitionAfterEventSignal -> (ItemDefinitionTriggeredAfterEvent -> IO ()) -> IO ()
 namespace ItemDefinitionBeforeEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ItemDefinitionBeforeEventSignal -> (ItemDefinitionTriggeredBeforeEvent -> IO ()) -> (ItemDefinitionTriggeredBeforeEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ItemDefinitionBeforeEventSignal -> (ItemDefinitionTriggeredBeforeEvent -> IO ()) -> IO (ItemDefinitionTriggeredBeforeEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ItemDefinitionBeforeEventSignal -> (ItemDefinitionTriggeredBeforeEvent -> IO ()) -> IO ()
 namespace ItemDefinitionTriggeredAfterEvent
 	export
@@ -2813,7 +2490,7 @@ namespace ItemDefinitionTriggeredAfterEvent
 	%foreign (get_var "itemStack")
 	itemStack : ItemDefinitionTriggeredAfterEvent -> ItemStack
 	export
-	%foreign (update_var "set_itemStack")
+	%foreign (update_var "itemStack")
 	set_itemStack : ItemDefinitionTriggeredAfterEvent -> ItemStack -> IO ()
 	export
 	%foreign (get_var "source")
@@ -2823,23 +2500,23 @@ namespace ItemDefinitionTriggeredBeforeEvent
 	%foreign (get_var "cancel")
 	cancel : ItemDefinitionTriggeredBeforeEvent -> Boolean
 	export
-	%foreign (update_var "set_cancel")
+	%foreign (update_var "cancel")
 	set_cancel : ItemDefinitionTriggeredBeforeEvent -> Boolean -> IO ()
 	export
 	%foreign id_as
 	asItemDefinitionTriggeredAfterEvent : ItemDefinitionTriggeredBeforeEvent -> ItemDefinitionTriggeredAfterEvent
 namespace ItemDurabilityComponent
 	export
-	%foreign (fn_call 2 "getDamageChance")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getDamageChance($1)")
 	getDamageChance : ItemDurabilityComponent -> Double -> Double
 	export
-	%foreign (fn_call 1 "getDamageRange")
+	%foreign (ffi_tag "($0) => $0 && $0.getDamageRange()")
 	getDamageRange : ItemDurabilityComponent -> NumberRange
 	export
 	%foreign (get_var "damage")
 	damage : ItemDurabilityComponent -> Double
 	export
-	%foreign (update_var "set_damage")
+	%foreign (update_var "damage")
 	set_damage : ItemDurabilityComponent -> Double -> IO ()
 	export
 	%foreign (get_var "maxDurability")
@@ -2852,13 +2529,13 @@ namespace ItemDurabilityComponent
 	asItemComponent : ItemDurabilityComponent -> ItemComponent
 namespace ItemEnchantsComponent
 	export
-	%foreign (fn_call 1 "removeAllEnchantments")
+	%foreign (ffi_tag "($0) => $0 && $0.removeAllEnchantments()")
 	removeAllEnchantments : ItemEnchantsComponent -> IO ()
 	export
 	%foreign (get_var "enchantments")
 	enchantments : ItemEnchantsComponent -> EnchantmentList
 	export
-	%foreign (update_var "set_enchantments")
+	%foreign (update_var "enchantments")
 	set_enchantments : ItemEnchantsComponent -> EnchantmentList -> IO ()
 	export
 	%foreign (get_var "componentId")
@@ -2897,56 +2574,56 @@ namespace ItemReleaseUseAfterEvent
 	useDuration : ItemReleaseUseAfterEvent -> Double
 namespace ItemReleaseUseAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ItemReleaseUseAfterEventSignal -> (ItemReleaseUseAfterEvent -> IO ()) -> (ItemReleaseUseAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ItemReleaseUseAfterEventSignal -> (ItemReleaseUseAfterEvent -> IO ()) -> IO (ItemReleaseUseAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ItemReleaseUseAfterEventSignal -> (ItemReleaseUseAfterEvent -> IO ()) -> IO ()
 namespace ItemStack
 	export
-	%foreign (cons_new "ItemStack")
-	MkItemStack : Union2 String ItemType -> Double -> ItemStack
+	%foreign (ffi_tag "($0,$1) => new ItemStack($0,$1)")
+	MkItemStack : String -> Double -> ItemStack
 	export
-	%foreign (fn_call 1 "clone")
+	%foreign (ffi_tag "($0) => $0 && $0.clone()")
 	clone : ItemStack -> ItemStack
 	export
-	%foreign (fn_call 2 "getComponent")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getComponent($1)")
 	getComponent : ItemStack -> String -> ItemComponent
 	export
-	%foreign (fn_call 1 "getComponents")
-	getComponents : ItemStack -> Array (ItemComponent)
+	%foreign (ffi_tag "($0) => $0 && $0.getComponents()")
+	getComponents : ItemStack -> (Array (ItemComponent))
 	export
-	%foreign (fn_call 1 "getLore")
-	getLore : ItemStack -> Array (String)
+	%foreign (ffi_tag "($0) => $0 && $0.getLore()")
+	getLore : ItemStack -> (Array (String))
 	export
-	%foreign (fn_call 1 "getTags")
-	getTags : ItemStack -> Array (String)
+	%foreign (ffi_tag "($0) => $0 && $0.getTags()")
+	getTags : ItemStack -> (Array (String))
 	export
-	%foreign (fn_call 2 "hasComponent")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.hasComponent($1)")
 	hasComponent : ItemStack -> String -> Boolean
 	export
-	%foreign (fn_call 2 "hasTag")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.hasTag($1)")
 	hasTag : ItemStack -> String -> Boolean
 	export
-	%foreign (fn_call 2 "isStackableWith")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.isStackableWith($1)")
 	isStackableWith : ItemStack -> ItemStack -> Boolean
 	export
-	%foreign (fn_call 2 "setCanDestroy")
-	setCanDestroy : ItemStack -> Array (String) -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setCanDestroy($1)")
+	setCanDestroy : ItemStack -> (Array (String)) -> IO ()
 	export
-	%foreign (fn_call 2 "setCanPlaceOn")
-	setCanPlaceOn : ItemStack -> Array (String) -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setCanPlaceOn($1)")
+	setCanPlaceOn : ItemStack -> (Array (String)) -> IO ()
 	export
-	%foreign (fn_call 2 "setLore")
-	setLore : ItemStack -> Array (String) -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setLore($1)")
+	setLore : ItemStack -> (Array (String)) -> IO ()
 	export
-	%foreign (fn_call 2 "triggerEvent")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.triggerEvent($1)")
 	triggerEvent : ItemStack -> String -> IO ()
 	export
 	%foreign (get_var "amount")
 	amount : ItemStack -> Double
 	export
-	%foreign (update_var "set_amount")
+	%foreign (update_var "amount")
 	set_amount : ItemStack -> Double -> IO ()
 	export
 	%foreign (get_var "isStackable")
@@ -2955,13 +2632,13 @@ namespace ItemStack
 	%foreign (get_var "keepOnDeath")
 	keepOnDeath : ItemStack -> Boolean
 	export
-	%foreign (update_var "set_keepOnDeath")
+	%foreign (update_var "keepOnDeath")
 	set_keepOnDeath : ItemStack -> Boolean -> IO ()
 	export
 	%foreign (get_var "lockMode")
 	lockMode : ItemStack -> ItemLockMode
 	export
-	%foreign (update_var "set_lockMode")
+	%foreign (update_var "lockMode")
 	set_lockMode : ItemStack -> ItemLockMode -> IO ()
 	export
 	%foreign (get_var "maxAmount")
@@ -2970,7 +2647,7 @@ namespace ItemStack
 	%foreign (get_var "nameTag")
 	nameTag : ItemStack -> String
 	export
-	%foreign (update_var "set_nameTag")
+	%foreign (update_var "nameTag")
 	set_nameTag : ItemStack -> String -> IO ()
 	export
 	%foreign (get_var "type")
@@ -2990,10 +2667,10 @@ namespace ItemStartUseAfterEvent
 	useDuration : ItemStartUseAfterEvent -> Double
 namespace ItemStartUseAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ItemStartUseAfterEventSignal -> (ItemStartUseAfterEvent -> IO ()) -> (ItemStartUseAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ItemStartUseAfterEventSignal -> (ItemStartUseAfterEvent -> IO ()) -> IO (ItemStartUseAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ItemStartUseAfterEventSignal -> (ItemStartUseAfterEvent -> IO ()) -> IO ()
 namespace ItemStartUseOnAfterEvent
 	export
@@ -3013,10 +2690,10 @@ namespace ItemStartUseOnAfterEvent
 	asBlockRaycastHit : ItemStartUseOnAfterEvent -> BlockRaycastHit
 namespace ItemStartUseOnAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ItemStartUseOnAfterEventSignal -> (ItemStartUseOnAfterEvent -> IO ()) -> (ItemStartUseOnAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ItemStartUseOnAfterEventSignal -> (ItemStartUseOnAfterEvent -> IO ()) -> IO (ItemStartUseOnAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ItemStartUseOnAfterEventSignal -> (ItemStartUseOnAfterEvent -> IO ()) -> IO ()
 namespace ItemStopUseAfterEvent
 	export
@@ -3030,10 +2707,10 @@ namespace ItemStopUseAfterEvent
 	useDuration : ItemStopUseAfterEvent -> Double
 namespace ItemStopUseAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ItemStopUseAfterEventSignal -> (ItemStopUseAfterEvent -> IO ()) -> (ItemStopUseAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ItemStopUseAfterEventSignal -> (ItemStopUseAfterEvent -> IO ()) -> IO (ItemStopUseAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ItemStopUseAfterEventSignal -> (ItemStopUseAfterEvent -> IO ()) -> IO ()
 namespace ItemStopUseOnAfterEvent
 	export
@@ -3050,10 +2727,10 @@ namespace ItemStopUseOnAfterEvent
 	asBlockRaycastHit : ItemStopUseOnAfterEvent -> BlockRaycastHit
 namespace ItemStopUseOnAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ItemStopUseOnAfterEventSignal -> (ItemStopUseOnAfterEvent -> IO ()) -> (ItemStopUseOnAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ItemStopUseOnAfterEventSignal -> (ItemStopUseOnAfterEvent -> IO ()) -> IO (ItemStopUseOnAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ItemStopUseOnAfterEventSignal -> (ItemStopUseOnAfterEvent -> IO ()) -> IO ()
 namespace ItemType
 	export
@@ -3061,44 +2738,41 @@ namespace ItemType
 	id : ItemType -> String
 namespace ItemTypes
 	export
-	%foreign (fn_call 2 "get")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.get($1)")
 	get : ItemTypes -> String -> ItemType
-	export
-	%foreign (fn_call 1 "getAll")
-	getAll : ItemTypes -> ItemTypeIterator
 namespace ItemUseAfterEvent
 	export
 	%foreign (get_var "itemStack")
 	itemStack : ItemUseAfterEvent -> ItemStack
 	export
-	%foreign (update_var "set_itemStack")
+	%foreign (update_var "itemStack")
 	set_itemStack : ItemUseAfterEvent -> ItemStack -> IO ()
 	export
 	%foreign (get_var "source")
 	source : ItemUseAfterEvent -> Player
 namespace ItemUseAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ItemUseAfterEventSignal -> (ItemUseAfterEvent -> IO ()) -> (ItemUseAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ItemUseAfterEventSignal -> (ItemUseAfterEvent -> IO ()) -> IO (ItemUseAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ItemUseAfterEventSignal -> (ItemUseAfterEvent -> IO ()) -> IO ()
 namespace ItemUseBeforeEvent
 	export
 	%foreign (get_var "cancel")
 	cancel : ItemUseBeforeEvent -> Boolean
 	export
-	%foreign (update_var "set_cancel")
+	%foreign (update_var "cancel")
 	set_cancel : ItemUseBeforeEvent -> Boolean -> IO ()
 	export
 	%foreign id_as
 	asItemUseAfterEvent : ItemUseBeforeEvent -> ItemUseAfterEvent
 namespace ItemUseBeforeEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ItemUseBeforeEventSignal -> (ItemUseBeforeEvent -> IO ()) -> (ItemUseBeforeEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ItemUseBeforeEventSignal -> (ItemUseBeforeEvent -> IO ()) -> IO (ItemUseBeforeEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ItemUseBeforeEventSignal -> (ItemUseBeforeEvent -> IO ()) -> IO ()
 namespace ItemUseOnAfterEvent
 	export
@@ -3121,27 +2795,27 @@ namespace ItemUseOnAfterEvent
 	asBlockRaycastHit : ItemUseOnAfterEvent -> BlockRaycastHit
 namespace ItemUseOnAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ItemUseOnAfterEventSignal -> (ItemUseOnAfterEvent -> IO ()) -> (ItemUseOnAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ItemUseOnAfterEventSignal -> (ItemUseOnAfterEvent -> IO ()) -> IO (ItemUseOnAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ItemUseOnAfterEventSignal -> (ItemUseOnAfterEvent -> IO ()) -> IO ()
 namespace ItemUseOnBeforeEvent
 	export
 	%foreign (get_var "cancel")
 	cancel : ItemUseOnBeforeEvent -> Boolean
 	export
-	%foreign (update_var "set_cancel")
+	%foreign (update_var "cancel")
 	set_cancel : ItemUseOnBeforeEvent -> Boolean -> IO ()
 	export
 	%foreign id_as
 	asItemUseOnAfterEvent : ItemUseOnBeforeEvent -> ItemUseOnAfterEvent
 namespace ItemUseOnBeforeEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ItemUseOnBeforeEventSignal -> (ItemUseOnBeforeEvent -> IO ()) -> (ItemUseOnBeforeEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ItemUseOnBeforeEventSignal -> (ItemUseOnBeforeEvent -> IO ()) -> IO (ItemUseOnBeforeEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ItemUseOnBeforeEventSignal -> (ItemUseOnBeforeEvent -> IO ()) -> IO ()
 namespace LeverActionAfterEvent
 	export
@@ -6390,21 +6064,21 @@ namespace MinecraftItemTypes
 	zombieVillagerSpawnEgg : ItemType
 namespace MolangVariableMap
 	export
-	%foreign (fn_call 3 "setColorRGB")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.setColorRGB($1,$2)")
 	setColorRGB : MolangVariableMap -> String -> Color -> MolangVariableMap
 	export
-	%foreign (fn_call 3 "setColorRGBA")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.setColorRGBA($1,$2)")
 	setColorRGBA : MolangVariableMap -> String -> Color -> MolangVariableMap
 	export
-	%foreign (fn_call 4 "setSpeedAndDirection")
+	%foreign (ffi_tag "($0,$1,$2,$3) => $0 && $0.setSpeedAndDirection($1,$2,$3)")
 	setSpeedAndDirection : MolangVariableMap -> String -> Double -> Vector3 -> MolangVariableMap
 	export
-	%foreign (fn_call 3 "setVector3")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.setVector3($1,$2)")
 	setVector3 : MolangVariableMap -> String -> Vector3 -> MolangVariableMap
 namespace NavigationResult
 	export
-	%foreign (fn_call 1 "getPath")
-	getPath : NavigationResult -> Array (Vector3)
+	%foreign (ffi_tag "($0) => $0 && $0.getPath()")
+	getPath : NavigationResult -> (Array (Vector3))
 	export
 	%foreign (get_var "isFullPath")
 	isFullPath : NavigationResult -> Boolean
@@ -6420,17 +6094,17 @@ namespace PistonActivateAfterEvent
 	asBlockEvent : PistonActivateAfterEvent -> BlockEvent
 namespace PistonActivateAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : PistonActivateAfterEventSignal -> (PistonActivateAfterEvent -> IO ()) -> (PistonActivateAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : PistonActivateAfterEventSignal -> (PistonActivateAfterEvent -> IO ()) -> IO (PistonActivateAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : PistonActivateAfterEventSignal -> (PistonActivateAfterEvent -> IO ()) -> IO ()
 namespace PistonActivateBeforeEvent
 	export
 	%foreign (get_var "cancel")
 	cancel : PistonActivateBeforeEvent -> Boolean
 	export
-	%foreign (update_var "set_cancel")
+	%foreign (update_var "cancel")
 	set_cancel : PistonActivateBeforeEvent -> Boolean -> IO ()
 	export
 	%foreign (get_var "isExpanding")
@@ -6443,50 +6117,50 @@ namespace PistonActivateBeforeEvent
 	asBlockEvent : PistonActivateBeforeEvent -> BlockEvent
 namespace PistonActivateBeforeEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : PistonActivateBeforeEventSignal -> (PistonActivateBeforeEvent -> IO ()) -> (PistonActivateBeforeEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : PistonActivateBeforeEventSignal -> (PistonActivateBeforeEvent -> IO ()) -> IO (PistonActivateBeforeEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : PistonActivateBeforeEventSignal -> (PistonActivateBeforeEvent -> IO ()) -> IO ()
 namespace Player
 	export
-	%foreign (fn_call 2 "addExperience")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.addExperience($1)")
 	addExperience : Player -> Double -> Double
 	export
-	%foreign (fn_call 2 "addLevels")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.addLevels($1)")
 	addLevels : Player -> Double -> Double
 	export
-	%foreign (fn_call 2 "getItemCooldown")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getItemCooldown($1)")
 	getItemCooldown : Player -> String -> Double
 	export
-	%foreign (fn_call 1 "getSpawnPoint")
+	%foreign (ffi_tag "($0) => $0 && $0.getSpawnPoint()")
 	getSpawnPoint : Player -> DimensionLocation
 	export
-	%foreign (fn_call 1 "getTotalXp")
+	%foreign (ffi_tag "($0) => $0 && $0.getTotalXp()")
 	getTotalXp : Player -> Double
 	export
-	%foreign (fn_call 1 "isOp")
+	%foreign (ffi_tag "($0) => $0 && $0.isOp()")
 	isOp : Player -> Boolean
 	export
-	%foreign (fn_call 3 "playSound")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.playSound($1,$2)")
 	playSound : Player -> String -> PlayerSoundOptions -> IO ()
 	export
-	%foreign (fn_call 3 "postClientMessage")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.postClientMessage($1,$2)")
 	postClientMessage : Player -> String -> String -> IO ()
 	export
-	%foreign (fn_call 1 "resetLevel")
+	%foreign (ffi_tag "($0) => $0 && $0.resetLevel()")
 	resetLevel : Player -> IO ()
 	export
-	%foreign (fn_call 2 "sendMessage")
-	sendMessage : Player -> Union3 String RawMessage Array (Union2 String RawMessage) -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.sendMessage($1)")
+	sendMessage : Player -> String -> IO ()
 	export
-	%foreign (fn_call 2 "setOp")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setOp($1)")
 	setOp : Player -> Boolean -> IO ()
 	export
-	%foreign (fn_call 2 "setSpawnPoint")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setSpawnPoint($1)")
 	setSpawnPoint : Player -> DimensionLocation -> IO ()
 	export
-	%foreign (fn_call 3 "startItemCooldown")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.startItemCooldown($1,$2)")
 	startItemCooldown : Player -> String -> Double -> IO ()
 	export
 	%foreign (get_var "camera")
@@ -6513,7 +6187,7 @@ namespace Player
 	%foreign (get_var "selectedSlot")
 	selectedSlot : Player -> Double
 	export
-	%foreign (update_var "set_selectedSlot")
+	%foreign (update_var "selectedSlot")
 	set_selectedSlot : Player -> Double -> IO ()
 	export
 	%foreign (get_var "totalXpNeededForNextLevel")
@@ -6551,13 +6225,13 @@ namespace PlayerSpawnAfterEvent
 	%foreign (get_var "initialSpawn")
 	initialSpawn : PlayerSpawnAfterEvent -> Boolean
 	export
-	%foreign (update_var "set_initialSpawn")
+	%foreign (update_var "initialSpawn")
 	set_initialSpawn : PlayerSpawnAfterEvent -> Boolean -> IO ()
 	export
 	%foreign (get_var "player")
 	player : PlayerSpawnAfterEvent -> Player
 	export
-	%foreign (update_var "set_player")
+	%foreign (update_var "player")
 	set_player : PlayerSpawnAfterEvent -> Player -> IO ()
 namespace PlayerSpawnAfterEventSignal
 	export
@@ -6575,10 +6249,10 @@ namespace PressurePlatePopAfterEvent
 	asBlockEvent : PressurePlatePopAfterEvent -> BlockEvent
 namespace PressurePlatePopAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : PressurePlatePopAfterEventSignal -> (PressurePlatePopAfterEvent -> IO ()) -> (PressurePlatePopAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : PressurePlatePopAfterEventSignal -> (PressurePlatePopAfterEvent -> IO ()) -> IO (PressurePlatePopAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : PressurePlatePopAfterEventSignal -> (PressurePlatePopAfterEvent -> IO ()) -> IO ()
 namespace PressurePlatePushAfterEvent
 	export
@@ -6595,14 +6269,14 @@ namespace PressurePlatePushAfterEvent
 	asBlockEvent : PressurePlatePushAfterEvent -> BlockEvent
 namespace PressurePlatePushAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : PressurePlatePushAfterEventSignal -> (PressurePlatePushAfterEvent -> IO ()) -> (PressurePlatePushAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : PressurePlatePushAfterEventSignal -> (PressurePlatePushAfterEvent -> IO ()) -> IO (PressurePlatePushAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : PressurePlatePushAfterEventSignal -> (PressurePlatePushAfterEvent -> IO ()) -> IO ()
 namespace ProjectileHitBlockAfterEvent
 	export
-	%foreign (fn_call 1 "getBlockHit")
+	%foreign (ffi_tag "($0) => $0 && $0.getBlockHit()")
 	getBlockHit : ProjectileHitBlockAfterEvent -> BlockHitInformation
 	export
 	%foreign (get_var "dimension")
@@ -6624,14 +6298,14 @@ namespace ProjectileHitBlockAfterEvent
 	asScriptCameraSetLocationOptions : ProjectileHitBlockAfterEvent -> ScriptCameraSetLocationOptions
 namespace ProjectileHitBlockAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ProjectileHitBlockAfterEventSignal -> (ProjectileHitBlockAfterEvent -> IO ()) -> (ProjectileHitBlockAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ProjectileHitBlockAfterEventSignal -> (ProjectileHitBlockAfterEvent -> IO ()) -> IO (ProjectileHitBlockAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ProjectileHitBlockAfterEventSignal -> (ProjectileHitBlockAfterEvent -> IO ()) -> IO ()
 namespace ProjectileHitEntityAfterEvent
 	export
-	%foreign (fn_call 1 "getEntityHit")
+	%foreign (ffi_tag "($0) => $0 && $0.getEntityHit()")
 	getEntityHit : ProjectileHitEntityAfterEvent -> EntityHitInformation
 	export
 	%foreign (get_var "dimension")
@@ -6653,49 +6327,49 @@ namespace ProjectileHitEntityAfterEvent
 	asScriptCameraSetLocationOptions : ProjectileHitEntityAfterEvent -> ScriptCameraSetLocationOptions
 namespace ProjectileHitEntityAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ProjectileHitEntityAfterEventSignal -> (ProjectileHitEntityAfterEvent -> IO ()) -> (ProjectileHitEntityAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ProjectileHitEntityAfterEventSignal -> (ProjectileHitEntityAfterEvent -> IO ()) -> IO (ProjectileHitEntityAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ProjectileHitEntityAfterEventSignal -> (ProjectileHitEntityAfterEvent -> IO ()) -> IO ()
 namespace PropertyRegistry
 	export
-	%foreign (fn_call 3 "registerEntityTypeDynamicProperties")
-	registerEntityTypeDynamicProperties : PropertyRegistry -> DynamicPropertiesDefinition -> Union2 String EntityType -> IO ()
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.registerEntityTypeDynamicProperties($1,$2)")
+	registerEntityTypeDynamicProperties : PropertyRegistry -> DynamicPropertiesDefinition -> String -> IO ()
 	export
-	%foreign (fn_call 2 "registerWorldDynamicProperties")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.registerWorldDynamicProperties($1)")
 	registerWorldDynamicProperties : PropertyRegistry -> DynamicPropertiesDefinition -> IO ()
 namespace Scoreboard
 	export
-	%foreign (fn_call 3 "addObjective")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.addObjective($1,$2)")
 	addObjective : Scoreboard -> String -> String -> ScoreboardObjective
 	export
-	%foreign (fn_call 2 "clearObjectiveAtDisplaySlot")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.clearObjectiveAtDisplaySlot($1)")
 	clearObjectiveAtDisplaySlot : Scoreboard -> DisplaySlotId -> ScoreboardObjective
 	export
-	%foreign (fn_call 2 "getObjective")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getObjective($1)")
 	getObjective : Scoreboard -> String -> ScoreboardObjective
 	export
-	%foreign (fn_call 2 "getObjectiveAtDisplaySlot")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getObjectiveAtDisplaySlot($1)")
 	getObjectiveAtDisplaySlot : Scoreboard -> DisplaySlotId -> ScoreboardObjectiveDisplayOptions
 	export
-	%foreign (fn_call 1 "getObjectives")
-	getObjectives : Scoreboard -> Array (ScoreboardObjective)
+	%foreign (ffi_tag "($0) => $0 && $0.getObjectives()")
+	getObjectives : Scoreboard -> (Array (ScoreboardObjective))
 	export
-	%foreign (fn_call 1 "getParticipants")
-	getParticipants : Scoreboard -> Array (ScoreboardIdentity)
+	%foreign (ffi_tag "($0) => $0 && $0.getParticipants()")
+	getParticipants : Scoreboard -> (Array (ScoreboardIdentity))
 	export
-	%foreign (fn_call 2 "removeObjective")
-	removeObjective : Scoreboard -> Union2 String ScoreboardObjective -> Boolean
+	%foreign (ffi_tag "($0,$1) => $0 && $0.removeObjective($1)")
+	removeObjective : Scoreboard -> String -> Boolean
 	export
-	%foreign (fn_call 3 "setObjectiveAtDisplaySlot")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.setObjectiveAtDisplaySlot($1,$2)")
 	setObjectiveAtDisplaySlot : Scoreboard -> DisplaySlotId -> ScoreboardObjectiveDisplayOptions -> ScoreboardObjective
 namespace ScoreboardIdentity
 	export
-	%foreign (fn_call 1 "getEntity")
+	%foreign (ffi_tag "($0) => $0 && $0.getEntity()")
 	getEntity : ScoreboardIdentity -> Entity
 	export
-	%foreign (fn_call 1 "isValid")
+	%foreign (ffi_tag "($0) => $0 && $0.isValid()")
 	isValid : ScoreboardIdentity -> Boolean
 	export
 	%foreign (get_var "displayName")
@@ -6708,29 +6382,29 @@ namespace ScoreboardIdentity
 	type : ScoreboardIdentity -> ScoreboardIdentityType
 namespace ScoreboardObjective
 	export
-	%foreign (fn_call 3 "addScore")
-	addScore : ScoreboardObjective -> Union3 String Entity ScoreboardIdentity -> Double -> Double
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.addScore($1,$2)")
+	addScore : ScoreboardObjective -> String -> Double -> Double
 	export
-	%foreign (fn_call 1 "getParticipants")
-	getParticipants : ScoreboardObjective -> Array (ScoreboardIdentity)
+	%foreign (ffi_tag "($0) => $0 && $0.getParticipants()")
+	getParticipants : ScoreboardObjective -> (Array (ScoreboardIdentity))
 	export
-	%foreign (fn_call 2 "getScore")
-	getScore : ScoreboardObjective -> Union3 String Entity ScoreboardIdentity -> Double
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getScore($1)")
+	getScore : ScoreboardObjective -> String -> Double
 	export
-	%foreign (fn_call 1 "getScores")
-	getScores : ScoreboardObjective -> Array (ScoreboardScoreInfo)
+	%foreign (ffi_tag "($0) => $0 && $0.getScores()")
+	getScores : ScoreboardObjective -> (Array (ScoreboardScoreInfo))
 	export
-	%foreign (fn_call 2 "hasParticipant")
-	hasParticipant : ScoreboardObjective -> Union3 String Entity ScoreboardIdentity -> Boolean
+	%foreign (ffi_tag "($0,$1) => $0 && $0.hasParticipant($1)")
+	hasParticipant : ScoreboardObjective -> String -> Boolean
 	export
-	%foreign (fn_call 1 "isValid")
+	%foreign (ffi_tag "($0) => $0 && $0.isValid()")
 	isValid : ScoreboardObjective -> Boolean
 	export
-	%foreign (fn_call 2 "removeParticipant")
-	removeParticipant : ScoreboardObjective -> Union3 String Entity ScoreboardIdentity -> Boolean
+	%foreign (ffi_tag "($0,$1) => $0 && $0.removeParticipant($1)")
+	removeParticipant : ScoreboardObjective -> String -> Boolean
 	export
-	%foreign (fn_call 3 "setScore")
-	setScore : ScoreboardObjective -> Union3 String Entity ScoreboardIdentity -> Double -> IO ()
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.setScore($1,$2)")
+	setScore : ScoreboardObjective -> String -> Double -> IO ()
 	export
 	%foreign (get_var "displayName")
 	displayName : ScoreboardObjective -> String
@@ -6746,17 +6420,17 @@ namespace ScoreboardScoreInfo
 	score : ScoreboardScoreInfo -> Double
 namespace ScreenDisplay
 	export
-	%foreign (fn_call 1 "isValid")
+	%foreign (ffi_tag "($0) => $0 && $0.isValid()")
 	isValid : ScreenDisplay -> Boolean
 	export
-	%foreign (fn_call 2 "setActionBar")
-	setActionBar : ScreenDisplay -> Union3 String RawMessage Array (Union2 String RawMessage) -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setActionBar($1)")
+	setActionBar : ScreenDisplay -> String -> IO ()
 	export
-	%foreign (fn_call 3 "setTitle")
-	setTitle : ScreenDisplay -> Union3 String RawMessage Array (Union2 String RawMessage) -> TitleDisplayOptions -> IO ()
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.setTitle($1,$2)")
+	setTitle : ScreenDisplay -> String -> TitleDisplayOptions -> IO ()
 	export
-	%foreign (fn_call 2 "updateSubtitle")
-	updateSubtitle : ScreenDisplay -> Union3 String RawMessage Array (Union2 String RawMessage) -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.updateSubtitle($1)")
+	updateSubtitle : ScreenDisplay -> String -> IO ()
 namespace ScriptEventCommandMessageAfterEvent
 	export
 	%foreign (get_var "id")
@@ -6778,10 +6452,10 @@ namespace ScriptEventCommandMessageAfterEvent
 	sourceType : ScriptEventCommandMessageAfterEvent -> ScriptEventSource
 namespace ScriptEventCommandMessageAfterEventSignal
 	export
-	%foreign (fn_call 3 "subscribe")
-	subscribe : ScriptEventCommandMessageAfterEventSignal -> (ScriptEventCommandMessageAfterEvent -> IO ()) -> ScriptEventMessageFilterOptions -> (ScriptEventCommandMessageAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.subscribe($1,$2)")
+	subscribe : ScriptEventCommandMessageAfterEventSignal -> (ScriptEventCommandMessageAfterEvent -> IO ()) -> ScriptEventMessageFilterOptions -> IO (ScriptEventCommandMessageAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ScriptEventCommandMessageAfterEventSignal -> (ScriptEventCommandMessageAfterEvent -> IO ()) -> IO ()
 namespace Seat
 	export
@@ -6798,23 +6472,23 @@ namespace Seat
 	position : Seat -> Vector3
 namespace ServerMessageAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : ServerMessageAfterEventSignal -> (MessageReceiveAfterEvent -> IO ()) -> (MessageReceiveAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : ServerMessageAfterEventSignal -> (MessageReceiveAfterEvent -> IO ()) -> IO (MessageReceiveAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : ServerMessageAfterEventSignal -> (MessageReceiveAfterEvent -> IO ()) -> IO ()
 namespace System
 	export
-	%foreign (fn_call 2 "clearRun")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.clearRun($1)")
 	clearRun : System -> Double -> IO ()
 	export
-	%foreign (fn_call 2 "run")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.run($1)")
 	run : System -> (IO ()) -> Double
 	export
-	%foreign (fn_call 3 "runInterval")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.runInterval($1,$2)")
 	runInterval : System -> (IO ()) -> Double -> Double
 	export
-	%foreign (fn_call 3 "runTimeout")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.runTimeout($1,$2)")
 	runTimeout : System -> (IO ()) -> Double -> Double
 	export
 	%foreign (get_var "afterEvents")
@@ -6851,20 +6525,20 @@ namespace TargetBlockHitAfterEvent
 	asBlockEvent : TargetBlockHitAfterEvent -> BlockEvent
 namespace TargetBlockHitAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : TargetBlockHitAfterEventSignal -> (TargetBlockHitAfterEvent -> IO ()) -> (TargetBlockHitAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : TargetBlockHitAfterEventSignal -> (TargetBlockHitAfterEvent -> IO ()) -> IO (TargetBlockHitAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : TargetBlockHitAfterEventSignal -> (TargetBlockHitAfterEvent -> IO ()) -> IO ()
 namespace Trigger
 	export
-	%foreign (cons_new "Trigger")
+	%foreign (ffi_tag "($0) => new Trigger($0)")
 	MkTrigger : String -> Trigger
 	export
 	%foreign (get_var "eventName")
 	eventName : Trigger -> String
 	export
-	%foreign (update_var "set_eventName")
+	%foreign (update_var "eventName")
 	set_eventName : Trigger -> String -> IO ()
 namespace TripWireTripAfterEvent
 	export
@@ -6872,80 +6546,80 @@ namespace TripWireTripAfterEvent
 	isPowered : TripWireTripAfterEvent -> Boolean
 	export
 	%foreign (get_var "sources")
-	sources : TripWireTripAfterEvent -> Array (Entity)
+	sources : TripWireTripAfterEvent -> (Array (Entity))
 	export
 	%foreign id_as
 	asBlockEvent : TripWireTripAfterEvent -> BlockEvent
 namespace TripWireTripAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : TripWireTripAfterEventSignal -> (TripWireTripAfterEvent -> IO ()) -> (TripWireTripAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : TripWireTripAfterEventSignal -> (TripWireTripAfterEvent -> IO ()) -> IO (TripWireTripAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : TripWireTripAfterEventSignal -> (TripWireTripAfterEvent -> IO ()) -> IO ()
 namespace Vector
 	export
-	%foreign (cons_new "Vector")
+	%foreign (ffi_tag "($0,$1,$2) => new Vector($0,$1,$2)")
 	MkVector : Double -> Double -> Double -> Vector
 	export
-	%foreign (fn_call 2 "equals")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.equals($1)")
 	equals : Vector -> Vector -> Boolean
 	export
-	%foreign (fn_call 1 "length")
+	%foreign (ffi_tag "($0) => $0 && $0.length()")
 	length : Vector -> Double
 	export
-	%foreign (fn_call 1 "lengthSquared")
+	%foreign (ffi_tag "($0) => $0 && $0.lengthSquared()")
 	lengthSquared : Vector -> Double
 	export
-	%foreign (fn_call 1 "normalized")
+	%foreign (ffi_tag "($0) => $0 && $0.normalized()")
 	normalized : Vector -> Vector
 	export
-	%foreign (fn_call 3 "add")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.add($1,$2)")
 	add : Vector -> Vector3 -> Vector3 -> Vector
 	export
-	%foreign (fn_call 3 "cross")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.cross($1,$2)")
 	cross : Vector -> Vector3 -> Vector3 -> Vector
 	export
-	%foreign (fn_call 3 "distance")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.distance($1,$2)")
 	distance : Vector -> Vector3 -> Vector3 -> Double
 	export
-	%foreign (fn_call 3 "divide")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.divide($1,$2)")
 	divide : Vector -> Vector3 -> Union2 Double Vector3 -> Vector
 	export
-	%foreign (fn_call 4 "lerp")
+	%foreign (ffi_tag "($0,$1,$2,$3) => $0 && $0.lerp($1,$2,$3)")
 	lerp : Vector -> Vector3 -> Vector3 -> Double -> Vector
 	export
-	%foreign (fn_call 3 "max")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.max($1,$2)")
 	max : Vector -> Vector3 -> Vector3 -> Vector
 	export
-	%foreign (fn_call 3 "min")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.min($1,$2)")
 	min : Vector -> Vector3 -> Vector3 -> Vector
 	export
-	%foreign (fn_call 3 "multiply")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.multiply($1,$2)")
 	multiply : Vector -> Vector3 -> Union2 Double Vector3 -> Vector
 	export
-	%foreign (fn_call 4 "slerp")
+	%foreign (ffi_tag "($0,$1,$2,$3) => $0 && $0.slerp($1,$2,$3)")
 	slerp : Vector -> Vector3 -> Vector3 -> Double -> Vector
 	export
-	%foreign (fn_call 3 "subtract")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.subtract($1,$2)")
 	subtract : Vector -> Vector3 -> Vector3 -> Vector
 	export
 	%foreign (get_var "x")
 	x : Vector -> Double
 	export
-	%foreign (update_var "set_x")
+	%foreign (update_var "x")
 	set_x : Vector -> Double -> IO ()
 	export
 	%foreign (get_var "y")
 	y : Vector -> Double
 	export
-	%foreign (update_var "set_y")
+	%foreign (update_var "y")
 	set_y : Vector -> Double -> IO ()
 	export
 	%foreign (get_var "z")
 	z : Vector -> Double
 	export
-	%foreign (update_var "set_z")
+	%foreign (update_var "z")
 	set_z : Vector -> Double -> IO ()
 	export
 	%foreign (get_var "back")
@@ -6979,17 +6653,17 @@ namespace WatchdogTerminateBeforeEvent
 	%foreign (get_var "cancel")
 	cancel : WatchdogTerminateBeforeEvent -> Boolean
 	export
-	%foreign (update_var "set_cancel")
+	%foreign (update_var "cancel")
 	set_cancel : WatchdogTerminateBeforeEvent -> Boolean -> IO ()
 	export
 	%foreign (get_var "terminateReason")
 	terminateReason : WatchdogTerminateBeforeEvent -> WatchdogTerminateReason
 namespace WatchdogTerminateBeforeEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : WatchdogTerminateBeforeEventSignal -> (WatchdogTerminateBeforeEvent -> IO ()) -> (WatchdogTerminateBeforeEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : WatchdogTerminateBeforeEventSignal -> (WatchdogTerminateBeforeEvent -> IO ()) -> IO (WatchdogTerminateBeforeEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : WatchdogTerminateBeforeEventSignal -> (WatchdogTerminateBeforeEvent -> IO ()) -> IO ()
 namespace WeatherChangeAfterEvent
 	export
@@ -7003,74 +6677,74 @@ namespace WeatherChangeAfterEvent
 	raining : WeatherChangeAfterEvent -> Boolean
 namespace WeatherChangeAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : WeatherChangeAfterEventSignal -> (WeatherChangeAfterEvent -> IO ()) -> (WeatherChangeAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : WeatherChangeAfterEventSignal -> (WeatherChangeAfterEvent -> IO ()) -> IO (WeatherChangeAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : WeatherChangeAfterEventSignal -> (WeatherChangeAfterEvent -> IO ()) -> IO ()
 namespace World
 	export
-	%foreign (fn_call 3 "broadcastClientMessage")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.broadcastClientMessage($1,$2)")
 	broadcastClientMessage : World -> String -> String -> IO ()
 	export
-	%foreign (fn_call 1 "getAbsoluteTime")
+	%foreign (ffi_tag "($0) => $0 && $0.getAbsoluteTime()")
 	getAbsoluteTime : World -> Double
 	export
-	%foreign (fn_call 1 "getAllPlayers")
-	getAllPlayers : World -> Array (Player)
+	%foreign (ffi_tag "($0) => $0 && $0.getAllPlayers()")
+	getAllPlayers : World -> (Array (Player))
 	export
-	%foreign (fn_call 1 "getDay")
+	%foreign (ffi_tag "($0) => $0 && $0.getDay()")
 	getDay : World -> Double
 	export
-	%foreign (fn_call 1 "getDefaultSpawnLocation")
+	%foreign (ffi_tag "($0) => $0 && $0.getDefaultSpawnLocation()")
 	getDefaultSpawnLocation : World -> Vector3
 	export
-	%foreign (fn_call 2 "getDimension")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getDimension($1)")
 	getDimension : World -> String -> Dimension
 	export
-	%foreign (fn_call 2 "getDynamicProperty")
-	getDynamicProperty : World -> String -> Union4 String Double Boolean Vector3
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getDynamicProperty($1)")
+	getDynamicProperty : World -> String -> String
 	export
-	%foreign (fn_call 2 "getEntity")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getEntity($1)")
 	getEntity : World -> String -> Entity
 	export
-	%foreign (fn_call 1 "getMoonPhase")
+	%foreign (ffi_tag "($0) => $0 && $0.getMoonPhase()")
 	getMoonPhase : World -> MoonPhase
 	export
-	%foreign (fn_call 2 "getPlayers")
-	getPlayers : World -> EntityQueryOptions -> Array (Player)
+	%foreign (ffi_tag "($0,$1) => $0 && $0.getPlayers($1)")
+	getPlayers : World -> EntityQueryOptions -> (Array (Player))
 	export
-	%foreign (fn_call 1 "getTimeOfDay")
+	%foreign (ffi_tag "($0) => $0 && $0.getTimeOfDay()")
 	getTimeOfDay : World -> Double
 	export
-	%foreign (fn_call 3 "playMusic")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.playMusic($1,$2)")
 	playMusic : World -> String -> MusicOptions -> IO ()
 	export
-	%foreign (fn_call 4 "playSound")
+	%foreign (ffi_tag "($0,$1,$2,$3) => $0 && $0.playSound($1,$2,$3)")
 	playSound : World -> String -> Vector3 -> WorldSoundOptions -> IO ()
 	export
-	%foreign (fn_call 3 "queueMusic")
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.queueMusic($1,$2)")
 	queueMusic : World -> String -> MusicOptions -> IO ()
 	export
-	%foreign (fn_call 2 "removeDynamicProperty")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.removeDynamicProperty($1)")
 	removeDynamicProperty : World -> String -> Boolean
 	export
-	%foreign (fn_call 2 "sendMessage")
-	sendMessage : World -> Union3 String RawMessage Array (Union2 String RawMessage) -> IO ()
+	%foreign (ffi_tag "($0,$1) => $0 && $0.sendMessage($1)")
+	sendMessage : World -> String -> IO ()
 	export
-	%foreign (fn_call 2 "setAbsoluteTime")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setAbsoluteTime($1)")
 	setAbsoluteTime : World -> Double -> IO ()
 	export
-	%foreign (fn_call 2 "setDefaultSpawnLocation")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setDefaultSpawnLocation($1)")
 	setDefaultSpawnLocation : World -> Vector3 -> IO ()
 	export
-	%foreign (fn_call 3 "setDynamicProperty")
-	setDynamicProperty : World -> String -> Union4 String Double Boolean Vector3 -> IO ()
+	%foreign (ffi_tag "($0,$1,$2) => $0 && $0.setDynamicProperty($1,$2)")
+	setDynamicProperty : World -> String -> String -> IO ()
 	export
-	%foreign (fn_call 2 "setTimeOfDay")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.setTimeOfDay($1)")
 	setTimeOfDay : World -> Double -> IO ()
 	export
-	%foreign (fn_call 1 "stopMusic")
+	%foreign (ffi_tag "($0) => $0 && $0.stopMusic()")
 	stopMusic : World -> IO ()
 	export
 	%foreign (get_var "afterEvents")
@@ -7224,10 +6898,10 @@ namespace WorldInitializeAfterEvent
 	propertyRegistry : WorldInitializeAfterEvent -> PropertyRegistry
 namespace WorldInitializeAfterEventSignal
 	export
-	%foreign (fn_call 2 "subscribe")
-	subscribe : WorldInitializeAfterEventSignal -> (WorldInitializeAfterEvent -> IO ()) -> (WorldInitializeAfterEvent -> IO ())
+	%foreign (ffi_tag "($0,$1) => $0 && $0.subscribe($1)")
+	subscribe : WorldInitializeAfterEventSignal -> (WorldInitializeAfterEvent -> IO ()) -> IO (WorldInitializeAfterEvent -> IO ())
 	export
-	%foreign (fn_call 2 "unsubscribe")
+	%foreign (ffi_tag "($0,$1) => $0 && $0.unsubscribe($1)")
 	unsubscribe : WorldInitializeAfterEventSignal -> (WorldInitializeAfterEvent -> IO ()) -> IO ()
 namespace CommandError
 	export
@@ -7241,3 +6915,23 @@ namespace LocationOutOfWorldBoundariesError
 	export
 	%foreign id_as
 	asError : LocationOutOfWorldBoundariesError -> Error
+
+-- Constants
+export
+%foreign (const_val "world")
+world : World
+
+%foreign (const_val "system")
+system : System
+
+export 
+TicksPerSecond : Int
+TicksPerSecond = 20
+
+export 
+TicksPerDay : Int
+TicksPerDay = 24000
+
+export 
+MoonPhaseCount : Int
+MoonPhaseCount = 8

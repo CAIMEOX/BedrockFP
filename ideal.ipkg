@@ -5,5 +5,7 @@ authors = "CAIMEOX"
 depends = js
 
 modules = MC,
-          MC.Server
+          MC.Server,
+          MC.Provider
+
 sourcedir = "src"

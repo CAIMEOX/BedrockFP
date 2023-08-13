@@ -50,7 +50,11 @@ class CodeGen {
     });
   }
   writeFile(path: string) {
-    const code: string[] = [];
+    const code: string[] = [
+      'module MC.Server',
+      'import JS',
+      'import MC.Provider',
+    ];
     for (let e of this.enums.values()) {
       code.push(e.gen());
     }
@@ -58,6 +62,15 @@ class CodeGen {
     for (let k of this.interfaces.values()) {
       code.push(k.type_def())
     }
+    code.push(`export data Error : Type where [external]
+namespace Error
+    export
+    %foreign (get_var "name")
+    name : Error -> String
+    %foreign (get_var "message")
+    message : Error -> String
+    %foreign (get_var "stack")
+    stack : Error -> UndefOr String`)
     const i = _i.filter(x => !x.is_empty())
     for (let n of this.classes.values()) {
       code.push(n.type_def());

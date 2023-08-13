@@ -2,10 +2,9 @@ package ideal-test
 version = 0.1.0
 authors = "CAIMEOX"
 license = "MIT"
-depends = js
+depends = js, ideal
 main = Main
 
--- name of executable
-executable = "ideal-test"
-
+opts       = "--codegen javascript"
+executable = "main.js"
 sourcedir = "src"

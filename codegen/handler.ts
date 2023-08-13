@@ -65,13 +65,24 @@ class ClassType {
     code.push(this.namespace_gen());
     this.con.map((x) => {
       code.push(`\texport`);
-      code.push(`\t%foreign (cons_new "${this.name}")`);
+      const sign = x.get_sign();
+      code.push(
+        `\t%foreign (ffi_tag "${get_cons(sign.types.length - 1, this.name)}")`
+      );
       code.push(`\t${makeSign(x.get_sign())}`);
     });
     this.methods.map((x) => {
-      code.push(`\texport`);
       const sign = x.get_sign();
-      code.push(`\t%foreign (fn_call ${sign.types.length - 1} "${sign.name}")`);
+      if (BlackList.classes.filter((x) => sign.types.includes(x)).length > 0){
+        return;
+      }
+      code.push(`\texport`);
+      if (sign.name == "subscribe") {
+        sign.types[sign.types.length - 1] = 'IO ' + sign.types[sign.types.length - 1]
+      }
+      code.push(
+        `\t%foreign (ffi_tag "${get_fn(sign.types.length - 1, sign.name)}")`
+      );
       code.push(`\t${makeSign(sign)}`);
     });
     if (this.find_property(interfaces) !== "") {
@@ -83,7 +94,7 @@ class ClassType {
         if (i === 0) {
           code.push(`\t%foreign (get_var "${y.name}")`);
         } else {
-          code.push(`\t%foreign (update_var "${y.name}")`);
+          code.push(`\t%foreign (update_var "${y.name.replace("set_", "")}")`);
         }
         code.push(`\t${makeSign(y)}`);
       })
@@ -226,8 +237,8 @@ class InterfaceType {
     return this.fields.size === 0;
   }
 
-  type_def(){
-    return `export data ${this.name} : Type where [external]`
+  type_def() {
+    return `export data ${this.name} : Type where [external]`;
   }
 }
 
@@ -238,40 +249,21 @@ class EnumType {
   values: unknown[];
   constructor(name: string, dec: EnumDeclaration) {
     this.name = name;
-    this.keys = dec.getMembers().map((e) => fix_method_name(e.getName()));
+    // this.keys = dec.getMembers().map((e) => fix_method_name(e.getName()));
     this.values = dec.getMembers().map((e) => e.getValue());
     this.enum_type = idris2type(typeof this.values[0]);
-  }
-
-  get_toFFI(): string[] {
-    let code = [`ToFFI ${this.name} ${this.enum_type} where`];
-    this.keys.map(capitalize).forEach((k, i) => {
-      code.push(`\ttoFFI ${k} = ${this.make_string(this.values[i])}`);
-    });
-    return code;
   }
 
   make_string(s: unknown) {
     return this.enum_type === "String" ? `"${s}"` : s;
   }
 
-  get_fromFFI(): string[] {
-    let code = [`FromFFI ${this.name} ${this.enum_type} where`];
-    const keys = this.keys.map(capitalize)
-    this.values.forEach((v, i) => {
-      code.push(`\tfromFFI ${this.make_string(v)} = ${keys[i]}`);
-    });
-    return code;
-  }
-
   get_data() {
-    return `data ${this.name} = ${this.keys.map(capitalize).join(" | ")}`;
+    return `export data ${this.name} = Mk${this.name} ${this.enum_type}`;
   }
 
   gen(): string {
-    return [this.get_data(), ...this.get_fromFFI(), ...this.get_toFFI()].join(
-      "\n"
-    );
+    return [this.get_data()].join("\n");
   }
 }
 
@@ -283,6 +275,20 @@ class ConstantType {
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function get_args(n: number) {
+  return new Array(n).fill(0).map((x, i) => "$" + i.toString());
+}
+
+function get_cons(n: number, name: string) {
+  return `(${get_args(n).join(",")}) => new ${name}(${get_args(n).join(",")})`;
+}
+
+function get_fn(n: number, name: string) {
+  return `(${get_args(n).join(",")}) => $0.${name}(${get_args(n)
+    .slice(1)
+    .join(",")})`;
 }
 
 export { ClassType, MethodType, EnumType, InterfaceType, ConstructorType };
